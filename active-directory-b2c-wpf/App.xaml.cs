@@ -28,7 +28,7 @@ namespace active_directory_b2c_wpf
         public static string AuthorityEditProfile = BaseAuthority.Replace("{tenant}", Tenant).Replace("{policy}", PolicyEditProfile);
         public static string AuthorityResetPassword = BaseAuthority.Replace("{tenant}", Tenant).Replace("{policy}", PolicyResetPassword);
 
-        private static PublicClientApplication _clientApp = new PublicClientApplication(ClientId, Authority);
+        private static PublicClientApplication _clientApp = new PublicClientApplication(ClientId, Authority, TokenCacheHelper.GetUserCache());
 
         public static PublicClientApplication PublicClientApp { get { return _clientApp; } }
     }

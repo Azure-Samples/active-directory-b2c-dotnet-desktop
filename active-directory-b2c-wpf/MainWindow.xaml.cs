@@ -197,7 +197,8 @@ namespace active_directory_b2c_wpf
             catch (MsalUiRequiredException ex)
             {
                 // Ignore, user will need to sign in interactively.
-                ResultText.Text = $"Error Acquiring Token Silently:{Environment.NewLine}{ex}";
+                // ResultText.Text = $"Error Acquiring Token Silently:{Environment.NewLine}{ex}";
+                ResultText.Text = "You need to sign-in first";
             }
             catch (Exception ex)
             {
