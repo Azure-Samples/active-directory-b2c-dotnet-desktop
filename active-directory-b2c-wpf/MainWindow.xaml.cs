@@ -36,7 +36,6 @@ namespace active_directory_b2c_wpf
             try
             {
                 authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes);
-                ResultText.Text = App.PublicClientApp.Users.Count().ToString();
                 DisplayBasicTokenInfo(authResult);
                 UpdateSignInState(true);
             }
@@ -82,7 +81,7 @@ namespace active_directory_b2c_wpf
             AuthenticationResult authResult = null;
             try
             {
-                authResult = await App.PublicClientApp.AcquireTokenSilentAsync(App.ApiScopes, App.PublicClientApp.Users.FirstOrDefault());
+                authResult = await App.PublicClientApp.AcquireTokenSilentAsync(App.ApiScopes, App.PublicClientApp.Users.FirstOrDefault(), App.Authority, false);
             }
             catch (MsalUiRequiredException ex)
             {
@@ -190,7 +189,7 @@ namespace active_directory_b2c_wpf
         {
             try
             {
-                AuthenticationResult authResult = await App.PublicClientApp.AcquireTokenSilentAsync(App.ApiScopes, App.PublicClientApp.Users.FirstOrDefault());
+                AuthenticationResult authResult = await App.PublicClientApp.AcquireTokenSilentAsync(App.ApiScopes, App.PublicClientApp.Users.FirstOrDefault(), App.Authority, false);
                 DisplayBasicTokenInfo(authResult);
                 UpdateSignInState(true);
             }
