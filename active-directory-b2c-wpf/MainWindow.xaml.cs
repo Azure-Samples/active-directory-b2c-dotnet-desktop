@@ -35,7 +35,7 @@ namespace active_directory_b2c_wpf
             AuthenticationResult authResult = null;
             try
             {
-                authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes);
+                authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, GetUserByPolicy(App.PublicClientApp.Users, App.PolicySignUpSignIn), UIBehavior.SelectAccount, string.Empty, null, App.Authority);
                 DisplayBasicTokenInfo(authResult);
                 UpdateSignInState(true);
             }
@@ -45,7 +45,7 @@ namespace active_directory_b2c_wpf
                 {
                     if (ex.Message.Contains("AADB2C90118"))
                     {
-                        authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, App.PublicClientApp.Users.FirstOrDefault(), UIBehavior.SelectAccount, string.Empty, null, App.AuthorityResetPassword);
+                        authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, GetUserByPolicy(App.PublicClientApp.Users, App.PolicySignUpSignIn), UIBehavior.SelectAccount, string.Empty, null, App.AuthorityResetPassword);
                     }
                     else
                     {
@@ -58,7 +58,7 @@ namespace active_directory_b2c_wpf
             }
             catch (Exception ex)
             {
-                ResultText.Text = $"Error Acquiring Token:{Environment.NewLine}{ex}";
+                ResultText.Text = $"Users:{string.Join(",",App.PublicClientApp.Users.Select(u => u.Identifier))}{Environment.NewLine}Error Acquiring Token:{Environment.NewLine}{ex}";
             }
         }
         
@@ -66,13 +66,13 @@ namespace active_directory_b2c_wpf
         {
             try
             {
-                AuthenticationResult authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, App.PublicClientApp.Users.FirstOrDefault(), UIBehavior.SelectAccount, string.Empty, null, App.AuthorityEditProfile);
+                ResultText.Text = $"Calling API:{App.AuthorityEditProfile}";
+                AuthenticationResult authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, GetUserByPolicy(App.PublicClientApp.Users, App.PolicyEditProfile), UIBehavior.SelectAccount, string.Empty, null, App.AuthorityEditProfile);
                 DisplayBasicTokenInfo(authResult);
             }
             catch (Exception ex)
             {
-                // Uncomment for debugging purposes
-                ResultText.Text = $"Error Acquiring Token Silently:{App.AuthorityEditProfile}{Environment.NewLine}{ex}"; 
+                ResultText.Text = $"Session has expired, please sign out and back in.{App.AuthorityEditProfile}{Environment.NewLine}{ex}"; 
             }
         }
 
@@ -81,7 +81,7 @@ namespace active_directory_b2c_wpf
             AuthenticationResult authResult = null;
             try
             {
-                authResult = await App.PublicClientApp.AcquireTokenSilentAsync(App.ApiScopes, App.PublicClientApp.Users.FirstOrDefault(), App.Authority, false);
+                authResult = await App.PublicClientApp.AcquireTokenSilentAsync(App.ApiScopes, GetUserByPolicy(App.PublicClientApp.Users, App.PolicySignUpSignIn), App.Authority, false);
             }
             catch (MsalUiRequiredException ex)
             {
@@ -90,7 +90,7 @@ namespace active_directory_b2c_wpf
 
                 try
                 {
-                    authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes);
+                    authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, GetUserByPolicy(App.PublicClientApp.Users, App.PolicySignUpSignIn));
                 }
                 catch (MsalException msalex)
                 {
@@ -123,7 +123,6 @@ namespace active_directory_b2c_wpf
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, url);
-                //Add the token in Authorization header
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 response = await httpClient.SendAsync(request);
                 var content = await response.Content.ReadAsStringAsync();
@@ -141,7 +140,10 @@ namespace active_directory_b2c_wpf
             {
                 try
                 {
-                    App.PublicClientApp.Remove(App.PublicClientApp.Users.FirstOrDefault());
+                    foreach (var user in App.PublicClientApp.Users)
+                    {
+                        App.PublicClientApp.Remove(user);
+                    }
                     UpdateSignInState(false);
                 }
                 catch (MsalException ex)
@@ -189,20 +191,42 @@ namespace active_directory_b2c_wpf
         {
             try
             {
-                AuthenticationResult authResult = await App.PublicClientApp.AcquireTokenSilentAsync(App.ApiScopes, App.PublicClientApp.Users.FirstOrDefault(), App.Authority, false);
+                AuthenticationResult authResult = await App.PublicClientApp.AcquireTokenSilentAsync(App.ApiScopes, GetUserByPolicy(App.PublicClientApp.Users, App.PolicySignUpSignIn), App.Authority, true);
                 DisplayBasicTokenInfo(authResult);
                 UpdateSignInState(true);
             }
             catch (MsalUiRequiredException ex)
             {
                 // Ignore, user will need to sign in interactively.
-                // ResultText.Text = $"Error Acquiring Token Silently:{Environment.NewLine}{ex}";
                 ResultText.Text = "You need to sign-in first";
+
+                //Un-comment for debugging purposes
+                //ResultText.Text = $"Error Acquiring Token Silently:{Environment.NewLine}{ex}";
             }
             catch (Exception ex)
             {
                 ResultText.Text = $"Error Acquiring Token Silently:{Environment.NewLine}{ex}";
             }
+        }
+
+        private IUser GetUserByPolicy(IEnumerable<IUser> users, string policy)
+        {
+            foreach (var user in users)
+            {
+                string userIdentifier = Base64UrlDecode(user.Identifier.Split('.')[0]);
+                if (userIdentifier.EndsWith(policy.ToLower())) return user;
+            }
+
+            return null;
+        }
+
+        private string Base64UrlDecode(string s)
+        {
+            s = s.Replace('-', '+').Replace('_', '/');
+            s = s.PadRight(s.Length + (4 - s.Length % 4) % 4, '=');
+            var byteArray = Convert.FromBase64String(s);
+            var decoded = Encoding.UTF8.GetString(byteArray, 0, byteArray.Count());
+            return decoded;
         }
     }
 }

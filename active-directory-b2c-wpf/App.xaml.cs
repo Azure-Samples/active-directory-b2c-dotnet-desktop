@@ -16,9 +16,9 @@ namespace active_directory_b2c_wpf
     {
         private static string Tenant = "fabrikamb2c.onmicrosoft.com";
         private static string ClientId = "841e1190-d73a-450c-9d68-f5cf16b78e81";
-        private static string PolicySignUpSignIn = "b2c_1_susi";
-        private static string PolicyEditProfile = "b2c_1_edit_profile";
-        private static string PolicyResetPassword = "b2c_1_reset";
+        public static string PolicySignUpSignIn = "b2c_1_susi";
+        public static string PolicyEditProfile = "b2c_1_edit_profile";
+        public static string PolicyResetPassword = "b2c_1_reset";
 
         public static string[] ApiScopes = { "https://fabrikamb2c.onmicrosoft.com/demoapi/demo.read" };
         public static string ApiEndpoint = "https://fabrikamb2chello.azurewebsites.net/hello";
@@ -29,7 +29,7 @@ namespace active_directory_b2c_wpf
         public static string AuthorityResetPassword = BaseAuthority.Replace("{tenant}", Tenant).Replace("{policy}", PolicyResetPassword);
 
         private static PublicClientApplication _clientApp = new PublicClientApplication(ClientId, Authority, TokenCacheHelper.GetUserCache());
-
+        
         public static PublicClientApplication PublicClientApp { get { return _clientApp; } }
     }
 }
