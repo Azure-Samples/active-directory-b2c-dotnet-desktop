@@ -46,11 +46,7 @@ Once created, replace the following value in the `App.xaml.cs` file with your ow
 public static string PolicySignUpSignIn = "b2c_1_susi";
 ```
 
-### [OPTIONAL] Step 4: Create your own API
-
-PENDING
-
-### [OPTIONAL] Step 5:  Configure the Visual Studio project with your app coordinates
+### [OPTIONAL] Step 4:  Configure the Visual Studio project with your app coordinates
 
 1. Open the solution in Visual Studio 2015.
 1. Open the `App.xaml.cs` file.
@@ -58,7 +54,7 @@ PENDING
 1. Find the assignment for each of the policies `public static string PolicyX` and replace the names of the policies you created in Step 3.
 1. Find the assignment for the scopes `public static string[] Scopes` and replace the scopes with those you created in Step 4.
 
-### Step 4:  Run the sample
+### Step 5:  Run the sample
 
 1. Clean the solution, rebuild the solution, and run it.
 1. Click the sign-in button at the top of the application screen. The sample works exactly in the same way regardless of the account type you choose, apart from some visual differences in the authentication and consent experience. Upon successful sign in, the application screen will list some basic profile info for the authenticated user and show buttons that allow you to edit your profile, call an API and sign out.
