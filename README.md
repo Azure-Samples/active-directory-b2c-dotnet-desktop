@@ -1,7 +1,7 @@
 ---
 services: active-directory-b2c
 platforms: dotnet
-author: gsacavdm
+author: jmprieur
 ---
 
 # WPF application signing in users with Azure Active Directory B2C and calling an API
