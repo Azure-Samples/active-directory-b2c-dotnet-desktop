@@ -24,7 +24,7 @@ If you just want to see the sample in action, you don't need to create your own 
 From your shell or command line:
 
 ```powershell
-git clone https://github.com/Azure-Samples/active-directory-b2c-wpf.git
+git clone https://github.com/Azure-Samples/active-directory-b2c-dotnet-desktop.git
 ```
 
 ### [OPTIONAL] Step 2: Get your own Azure AD B2C tenant
