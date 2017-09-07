@@ -107,7 +107,7 @@ Your native application registration should include the following information:
 - Provide a descriptive Name for the single page application, for example, `My Test WPF App`. You will identify this application by its Name within the Azure portal.
 - Mark **Yes** for the **Native Client** setting for your application.
 - Create your application.
-- Once the application is created, open your `My Test SPA` and open the **API Access** window (in the left nav menu). Click **Add** and select the name of the Node.js Web API you registered previously, for example `My Test Node.js Web API`. Select the scope(s) you defined previously, for example, `demo.read` and hit **Save**.
+- Once the application is created, open your `My Test WPF App` and open the **API Access** window (in the left nav menu). Click **Add** and select the name of the Node.js Web API you registered previously, for example `My Test Node.js Web API`. Select the scope(s) you defined previously, for example, `demo.read` and hit **Save**.
 
 ### Step 5: Configure your Visual Studio project with your Azure AD B2C app registrations
 
@@ -117,6 +117,7 @@ Your native application registration should include the following information:
 1. Find the assignment for `public static string ClientID` and replace the value with the Application ID from your Native app registration, for example `My Test WPF App`.
 1. Find the assignment for each of the policies, for example `public static string PolicySignUpSignIn`, and replace the names of the policies you created in Step 2, e.g. `b2c_1_SiUpIn`
 1. Find the assignment for the scopes `public static string[] ApiScopes` and replace with the scope you created in Step 3, for example, `https://<your-tenant-name>.onmicrosoft.com/demoapi/demo.read`.
+1. Change the `ApiEndpoint` variable to point to your Node.js Web API `hello` endpoint running locally at `"http://localhost:5000/hello"`
 
 ### Step 6:  Run the sample
 
