@@ -10,72 +10,120 @@ This simple sample demonstrates how to use the [Microsoft Authentication Library
 
 ## How To Run This Sample
 
-To run this sample you will need:
-- Visual Studio 2017
-- An Internet connection
-- At least one of the following accounts:
-- An Azure AD B2C tenant
+There are two ways to run this sample:
 
-If you don't have an Azure AD B2C tenant, you can follow [those instructions](https://azure.microsoft.com/documentation/articles/active-directory-b2c-get-started/) to create one. 
-If you just want to see the sample in action, you don't need to create your own tenant as the project comes with some settings associated to a test tenant and application; however it is highly recommend that you register your own app and experience going through the configuration steps below.   
+1. **Using the demo environment** - The sample is already configured to use a demo environment and can be run simply by downloading this repository and running the app on your machine. See steps below for Running with demo environment.
+2. **Using your own Azure AD B2C tenant** - If you would like to use your own Azure AD B2C configuration, follow the steps listed below for Using your own Azure AD B2C tenant.
+
+## Using the demo environment
+
+This sample demonstrates how to sign in or sign up for an account at "Wingtip Toys" (the demo environment for this sample) using a WPF Desktop application.  
+
+Once signed-in, clicking on the **Call API** button shows the display name you used when you created your account. The **Edit Profile** button allows you to change your display name and city. The **Logout** button logs you out of the application.
 
 ### Step 1: Clone or download this repository
 
 From your shell or command line:
 
-```powershell
+```
 git clone https://github.com/Azure-Samples/active-directory-b2c-dotnet-desktop.git
 ```
 
-### [OPTIONAL] Step 2: Get your own Azure AD B2C tenant
+### Step 2: Run the project
 
-You can also modify the sample to use your own Azure AD B2C tenant.  First, you'll need to create an Azure AD B2C tenant by following [these instructions](https://azure.microsoft.com/documentation/articles/active-directory-b2c-get-started).
+Open the `active-directory-b2c-wpf.sln` and run the project. 
 
-> *IMPORTANT*: if you choose to perform one of the optional steps, you have to perform ALL of them for the sample to work as expected.
+The sample demonstrates the following functionality: 
 
-### [OPTIONAL] Step 3: Create your own policies
+1. Click the sign-in button at the top of the application screen. The sample works exactly in the same way regardless of the account type you choose, apart from some visual differences in the authentication and consent experience. Upon successful sign in, the application screen will list some basic profile info for the authenticated user and show buttons that allow you to edit your profile, call an API and sign out.
+2. Close the application and reopen it. You will see that the app retains access to the API and retrieves the user info right away, without the need to sign in again.
+3. Sign out by clicking the Sign out button and confirm that you lose access to the API until the exit interactive sign in. 
 
-This sample uses three types of policies: a unified sign-up/sign-in policy & a profile editing policy.  Create one policy of each type by following [the instructions here](https://azure.microsoft.com/documentation/articles/active-directory-b2c-reference-policies).  You may choose to include as many or as few identity providers as you wish.
 
-If you already have existing policies in your Azure AD B2C tenant, feel free to re-use those.  No need to create new ones just for this sample.
+## Using your own Azure AD B2C Tenant
 
-### [OPTIONAL] Step 4: Create your own Web API
+In the previous section, you learned how to run the sample application using the demo environment. In this section, you'll learn how to configure this WPF application and a related [Node.js Web API with Azure AD B2C sample](https://github.com/Azure-Samples/active-directory-b2c-javascript-nodejs-webapi) to work with your own Azure AD B2C Tenant.
 
-This sample calls an API at https://fabrikamb2chello.azurewebsites.net which has the same code as the sample [Node.js Web API with Azure AD B2C](https://github.com/Azure-Samples/active-directory-b2c-javascript-nodejs-webapi). You'll need your own API or at the very least, you'll need to [register a Web API with Azure AD B2C](https://docs.microsoft.com/azure/active-directory-b2c/active-directory-b2c-app-registration#register-a-web-api) so that you can define the scopes that your single page application will request access tokens for. 
+### Step 1: Get your own Azure AD B2C tenant
 
-Your web API registration should include the following information:
+First, you'll need an Azure AD B2C tenant. If you don't have an existing Azure AD B2C tenant that you can use for testing purposes, you can create your own by following [these instruction](https://azure.microsoft.com/documentation/articles/active-directory-b2c-get-started/).
 
-- Enable the **Web App/Web API** setting for your application.
-- Set the **Reply URL** to the appropriate value indicated in the sample or provide any URL if you're only doing the web api registration, for example `https://myapi`.
-- Make sure you also provide a **AppID URI**, for example `demoapi`, this is used to construct the scopes that are configured in you single page application's code.
-- (Optional) Once you're app is created, open the app's **Published Scopes** blade and add any extra scopes you want.
-- Copy the **AppID URI** and **Published Scopes values**, so you can input them in your application's code.
+### Step 2: Create your own policies
 
-### [OPTIONAL] Step 5: Create your own Native app
+This sample uses three types of policies: a unified sign-up/sign-in policy, a profile editing policy, and a password reset policy.  Create one policy of each type by following [the built-in policy instructions](https://azure.microsoft.com/documentation/articles/active-directory-b2c-reference-policies). You may choose to include as many or as few identity providers as you wish.
 
-Now you need to [register your native app in your B2C tenant](https://docs.microsoft.com/azure/active-directory-b2c/active-directory-b2c-app-registration#register-a-mobilenative-application), so that it has its own Application ID. Don't forget to grant your application API Access to the web API you registered in the previous step.
+If you already have existing policies in your Azure AD B2C tenant, feel free to re-use those policies in this sample.
+
+### Step 3: Register your own Web API with Azure AD B2C
+
+As you saw in the demo environment, this sample calls a Web API at https://fabrikamb2chello.azurewebsites.net. This demo Web API uses the same code found in the sample [Node.js Web API with Azure AD B2C](https://github.com/Azure-Samples/active-directory-b2c-javascript-nodejs-webapi), in case you need to reference it for debugging purposes. 
+
+You must replace the demo environment Web API with your own Web API. If you do not have your own Web API, you can clone the [Node.js Web API with Azure AD B2C](https://github.com/Azure-Samples/active-directory-b2c-javascript-nodejs-webapi) sample and register it with your tenant. 
+
+#### How to setup and register the Node.js Web API sample
+
+First, clone the Node.js Web API sample repository into its own directory, for example:  
+
+```
+cd ..
+git clone https://github.com/Azure-Samples/active-directory-b2c-javascript-nodejs-webapi.git
+```
+
+Second, follow the instructions at [register a Web API with Azure AD B2C](https://docs.microsoft.com/azure/active-directory-b2c/active-directory-b2c-app-registration#register-a-web-api) to register the Node.js Web API sample with your tenant. Registering your Web API allows you to define the scopes that your single page application will request access tokens for. 
+
+Provide the following values for the Node.js Web API registration: 
+
+- Provide a descriptive Name for the Node.js Web API, for example, `My Test Node.js Web API`. You will identify this application by its Name whenever working in the Azure portal.
+- Mark **Yes** for the **Web App/Web API** setting for your application.
+- Set the **Reply URL** to `http://localhost:5000`. This is the port number that the Node.js Web API sample is configured to run on. 
+- Set the **AppID URI** to `demoapi`. This AppID URI is a unique identifier representing this Node.jS Web API. The AppID URI is used to construct the scopes that are configured in you single page application's code. For example, in this Node.js Web API sample, the scope will have the value `https://<your-tenant-name>.onmicrosoft.com/demoapi/demo.read` 
+- Create the application. 
+- Once the application is created, open your `My Test Node.js Web API` application and then open the **Published Scopes** window (in the left nav menu) and add the scope `demo.read` followed by a description `demoing a read scenario`. Click **Save**.
+
+Third, in the `index.html` file of the Node.js Web API sample, update the following variables to refer to your Web API registration.  
+
+```
+var tenantID = "<your-tenant-name>.onmicrosoft.com";
+var clientID = "<Application ID for your Node.js Web API - found on Properties page in Azure portal>";
+var policyName = "<Name of your sign in / sign up policy, e.g. B2C_1_SiUpIn>";
+```
+
+Lastly, to run your Node.js Web API, run the following command from your shell or command line
+
+```
+npm install && npm update
+node index.js
+```
+
+Your Node.js Web API sample is now running on Port 5000. 
+
+
+### Step 4: Register your Native app
+
+Now you need to [register your native app in your B2C tenant](https://docs.microsoft.com/azure/active-directory-b2c/active-directory-b2c-app-registration#register-a-mobilenative-application), so that it has its own Application ID. 
 
 Your native application registration should include the following information:
 
-- Enable the **Native Client** setting for your application.
-- Once your app is created, open the app's **API access** blade and **Add** the API you created in the previous step.
-- Copy the Application ID generated for your application, so you can use it in the next step.
+- Provide a descriptive Name for the single page application, for example, `My Test WPF App`. You will identify this application by its Name within the Azure portal.
+- Mark **Yes** for the **Native Client** setting for your application.
+- Create your application.
+- Once the application is created, open your `My Test SPA` and open the **API Access** window (in the left nav menu). Click **Add** and select the name of the Node.js Web API you registered previously, for example `My Test Node.js Web API`. Select the scope(s) you defined previously, for example, `demo.read` and hit **Save**.
 
-### [OPTIONAL] Step 6: Configure the Visual Studio project with your app coordinates
+### Step 5: Configure your Visual Studio project with your Azure AD B2C app registrations
 
 1. Open the solution in Visual Studio.
 1. Open the `App.xaml.cs` file.
 1. Find the assignment for `public static string Tenant` and replace the value with your tenant name.
-1. Find the assignment for `public static string ClientID` and replace the value with the Application ID from Step 2.
-1. Find the assignment for each of the policies `public static string PolicyX` and replace the names of the policies you created in Step 3.
-1. Find the assignment for the scopes `public static string[] Scopes` and replace the scopes with those you created in Step 4.
+1. Find the assignment for `public static string ClientID` and replace the value with the Application ID from your Native app registration, for example `My Test WPF App`.
+1. Find the assignment for each of the policies, for example `public static string PolicySignUpSignIn`, and replace the names of the policies you created in Step 2, e.g. `b2c_1_SiUpIn`
+1. Find the assignment for the scopes `public static string[] ApiScopes` and replace with the scope you created in Step 3, for example, `https://<your-tenant-name>.onmicrosoft.com/demoapi/demo.read`.
 
-### Step 7:  Run the sample
+### Step 6:  Run the sample
 
-1. Clean the solution, rebuild the solution, and run it.
-1. Click the sign-in button at the top of the application screen. The sample works exactly in the same way regardless of the account type you choose, apart from some visual differences in the authentication and consent experience. Upon successful sign in, the application screen will list some basic profile info for the authenticated user and show buttons that allow you to edit your profile, call an API and sign out.
-1. Close the application and reopen it. You will see that the app retains access to the API and retrieves the user info right away, without the need to sign in again.
-1. Sign out by clicking the Sign out button and confirm that you lose access to the API until the exit interactive sign in.  
+1. Rebuild the solution and run the app.
+2. Click the sign-in button at the top of the application screen. The sample works exactly in the same way regardless of the account type you choose, apart from some visual differences in the authentication and consent experience. Upon successful sign in, the application screen will list some basic profile info for the authenticated user and show buttons that allow you to edit your profile, call an API and sign out.
+3. Close the application and reopen it. You will see that the app retains access to the API and retrieves the user info right away, without the need to sign in again.
+4. Sign out by clicking the Sign out button and confirm that you lose access to the API until the exit interactive sign in.  
 
 ## More information
 For more information on Azure B2C, see [the Azure AD B2C documentation homepage](http://aka.ms/aadb2c). 
