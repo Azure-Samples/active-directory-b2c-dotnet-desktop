@@ -9,13 +9,13 @@ using System.Web.Http;
 namespace HelloAPI_server.Controllers
 {
 
+    [Authorize]
     public class HelloController : ApiController
     {
         // OWIN auth middleware constants
         public const string scopeElement = "http://schemas.microsoft.com/identity/claims/scope";
         public const string objectIdElement = "http://schemas.microsoft.com/identity/claims/objectidentifier";
 
-        [Authorize]
         [Route("hello")]
         [HttpGet]
         public string Hello()
