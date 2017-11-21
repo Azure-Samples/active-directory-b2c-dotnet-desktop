@@ -14,12 +14,15 @@ namespace active_directory_b2c_wpf
     /// </summary>
     public partial class App : Application
     {
+
+        // TODO: Update this section with values from your B2C tenant
         private static string Tenant = "fabrikamb2c.onmicrosoft.com";
         private static string ClientId = "841e1190-d73a-450c-9d68-f5cf16b78e81";
         public static string PolicySignUpSignIn = "b2c_1_susi";
         public static string PolicyEditProfile = "b2c_1_edit_profile";
         public static string PolicyResetPassword = "b2c_1_reset";
 
+        // TODO: Update this value with the scopes you configured in your B2C tenant
         public static string[] ApiScopes = { "https://fabrikamb2c.onmicrosoft.com/helloapi/demo.read" };
         public static string ApiEndpoint = "https://localhost:44329/hello";
 
