@@ -128,6 +128,11 @@ namespace active_directory_b2c_wpf
                 var content = await response.Content.ReadAsStringAsync();
                 return content;
             }
+            catch (HttpRequestException ex)
+            {
+                return "Unable to call API. Verify the service is running at " + App.ApiEndpoint +
+                    "\nException message: " + ex.InnerException.Message;
+            }            
             catch (Exception ex)
             {
                 return ex.ToString();
