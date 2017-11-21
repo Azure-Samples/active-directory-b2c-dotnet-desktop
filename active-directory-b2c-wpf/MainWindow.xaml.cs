@@ -72,7 +72,7 @@ namespace active_directory_b2c_wpf
             }
             catch (Exception ex)
             {
-                ResultText.Text = $"Session has expired, please sign out and back in.{App.AuthorityEditProfile}{Environment.NewLine}{ex}"; 
+                ResultText.Text = $"{App.AuthorityEditProfile}{Environment.NewLine}{ex}"; 
             }
         }
 
