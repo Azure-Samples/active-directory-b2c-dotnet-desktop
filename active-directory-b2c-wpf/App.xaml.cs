@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using Microsoft.Identity.Client;
 
 namespace active_directory_b2c_wpf
@@ -28,8 +22,6 @@ namespace active_directory_b2c_wpf
         public static string AuthorityEditProfile = BaseAuthority.Replace("{tenant}", Tenant).Replace("{policy}", PolicyEditProfile);
         public static string AuthorityResetPassword = BaseAuthority.Replace("{tenant}", Tenant).Replace("{policy}", PolicyResetPassword);
 
-        private static PublicClientApplication _clientApp = new PublicClientApplication(ClientId, Authority, TokenCacheHelper.GetUserCache());
-        
-        public static PublicClientApplication PublicClientApp { get { return _clientApp; } }
+        public static PublicClientApplication PublicClientApp { get; } = new PublicClientApplication(ClientId, Authority, TokenCacheHelper.GetUserCache());
     }
 }
