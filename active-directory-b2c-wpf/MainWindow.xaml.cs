@@ -60,7 +60,7 @@ namespace active_directory_b2c_wpf
             try
             {
                 ResultText.Text = $"Calling API:{App.AuthorityEditProfile}";
-                AuthenticationResult authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, GetUserByPolicy(accounts, App.PolicyEditProfile), UIBehavior.SelectAccount, string.Empty, null, App.AuthorityEditProfile);
+                AuthenticationResult authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, GetUserByPolicy(accounts, App.PolicyEditProfile), UIBehavior.NoPrompt, string.Empty, null, App.AuthorityEditProfile);
                 DisplayBasicTokenInfo(authResult);
             }
             catch (Exception ex)
