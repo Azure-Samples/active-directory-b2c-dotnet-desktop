@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Microsoft.Identity.Client;
+using Microsoft.Identity.Client.AppConfig;
 
 namespace active_directory_b2c_wpf
 {
@@ -22,6 +23,15 @@ namespace active_directory_b2c_wpf
         public static string AuthorityEditProfile = BaseAuthority.Replace("{tenant}", Tenant).Replace("{policy}", PolicyEditProfile);
         public static string AuthorityResetPassword = BaseAuthority.Replace("{tenant}", Tenant).Replace("{policy}", PolicyResetPassword);
 
-        public static PublicClientApplication PublicClientApp { get; } = new PublicClientApplication(ClientId, Authority, TokenCacheHelper.GetUserCache());
+        public static IPublicClientApplication PublicClientApp { get; private set; }
+
+        static App()
+        {
+            PublicClientApp = PublicClientApplicationBuilder.Create(ClientId)
+                .WithB2CAuthority(Authority)
+                .Build();
+
+            TokenCacheHelper.Bind(PublicClientApp.UserTokenCache);
+        }
     }
 }

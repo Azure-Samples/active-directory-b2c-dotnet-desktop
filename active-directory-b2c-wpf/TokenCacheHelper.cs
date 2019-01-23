@@ -33,7 +33,7 @@ namespace active_directory_b2c_wpf
 {
     static class TokenCacheHelper
     {
- 
+
         /// <summary>
         /// Get the user token cache
         /// </summary>
@@ -73,20 +73,23 @@ namespace active_directory_b2c_wpf
         public static void AfterAccessNotification(TokenCacheNotificationArgs args)
         {
             // if the access operation resulted in a cache update
-            if (args.TokenCache.HasStateChanged)
+            if (args.HasStateChanged)
             {
                 lock (FileLock)
                 {
                     // reflect changesgs in the persistent store
                     File.WriteAllBytes(CacheFilePath,
-                                       ProtectedData.Protect(args.TokenCache.Serialize(), 
-                                                             null, 
-                                                             DataProtectionScope.CurrentUser)
-                                      );
-                    // once the write operationtakes place restore the HasStateChanged bit to filse
-                    args.TokenCache.HasStateChanged = false;
+                                       ProtectedData.Protect(args.TokenCache.Serialize(),
+                                                             null,
+                                                             DataProtectionScope.CurrentUser));
                 }
             }
+        }
+
+        internal static void Bind(ITokenCache tokenCache)
+        {
+            tokenCache.SetBeforeAccess(BeforeAccessNotification);
+            tokenCache.SetAfterAccess(AfterAccessNotification);
         }
     }
 }

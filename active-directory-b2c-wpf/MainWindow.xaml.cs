@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.Identity.Client.ApiConfig;
 
 namespace active_directory_b2c_wpf
 {
@@ -24,10 +25,15 @@ namespace active_directory_b2c_wpf
         private async void SignInButton_Click(object sender, RoutedEventArgs e)
         {
             AuthenticationResult authResult = null;
+            var app = App.PublicClientApp;
             IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
             try
             {
-                authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, GetUserByPolicy(accounts, App.PolicySignUpSignIn), UIBehavior.SelectAccount, string.Empty, null, App.Authority);
+                authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes, null)
+                    .WithAccount(GetUserByPolicy(accounts, App.PolicySignUpSignIn))
+                    .WithPrompt(Prompt.SelectAccount)
+                    .ExecuteAsync(new System.Threading.CancellationToken());
+
                 DisplayBasicTokenInfo(authResult);
                 UpdateSignInState(true);
             }
@@ -37,7 +43,11 @@ namespace active_directory_b2c_wpf
                 {
                     if (ex.Message.Contains("AADB2C90118"))
                     {
-                        authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, GetUserByPolicy(accounts, App.PolicySignUpSignIn), UIBehavior.SelectAccount, string.Empty, null, App.AuthorityResetPassword);
+                        authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes, null)
+                            .WithAccount(GetUserByPolicy(accounts, App.PolicySignUpSignIn))
+                            .WithPrompt(Prompt.SelectAccount)
+                            .WithB2CAuthority(App.AuthorityResetPassword)
+                            .ExecuteAsync(new System.Threading.CancellationToken());
                     }
                     else
                     {
@@ -57,10 +67,16 @@ namespace active_directory_b2c_wpf
         private async void EditProfileButton_Click(object sender, RoutedEventArgs e)
         {
             IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
+            var app = App.PublicClientApp;
             try
             {
                 ResultText.Text = $"Calling API:{App.AuthorityEditProfile}";
-                AuthenticationResult authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, GetUserByPolicy(accounts, App.PolicyEditProfile), UIBehavior.NoPrompt, string.Empty, null, App.AuthorityEditProfile);
+                AuthenticationResult authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes, null)
+                            .WithAccount(GetUserByPolicy(accounts, App.PolicySignUpSignIn))
+                            .WithPrompt(Prompt.NoPrompt)
+                            .WithB2CAuthority(App.AuthorityEditProfile)
+                            .ExecuteAsync(new System.Threading.CancellationToken());
+                    
                 DisplayBasicTokenInfo(authResult);
             }
             catch (Exception ex)
@@ -72,10 +88,14 @@ namespace active_directory_b2c_wpf
         private async void CallApiButton_Click(object sender, RoutedEventArgs e)
         {
             AuthenticationResult authResult = null;
+            var app = App.PublicClientApp;
             IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
             try
             {
-                authResult = await App.PublicClientApp.AcquireTokenSilentAsync(App.ApiScopes, GetUserByPolicy(accounts, App.PolicySignUpSignIn), App.Authority, false);
+                authResult =  await (app as PublicClientApplication).AcquireTokenSilent(App.ApiScopes, null)
+                    .WithAccount(GetUserByPolicy(accounts, App.PolicySignUpSignIn))
+                    .WithForceRefresh(false)
+                    .ExecuteAsync(new System.Threading.CancellationToken());
             }
             catch (MsalUiRequiredException ex)
             {
@@ -84,7 +104,9 @@ namespace active_directory_b2c_wpf
 
                 try
                 {
-                    authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, GetUserByPolicy(accounts, App.PolicySignUpSignIn));
+                     authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes, null)
+                    .WithAccount(GetUserByPolicy(accounts, App.PolicySignUpSignIn))
+                    .ExecuteAsync(new System.Threading.CancellationToken());
                 }
                 catch (MsalException msalex)
                 {
@@ -133,7 +155,7 @@ namespace active_directory_b2c_wpf
             IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
             try
             {
-               while(accounts.Any())
+                while (accounts.Any())
                 {
                     await App.PublicClientApp.RemoveAsync(accounts.FirstOrDefault());
                     accounts = await App.PublicClientApp.GetAccountsAsync();
@@ -187,9 +209,14 @@ namespace active_directory_b2c_wpf
         {
             try
             {
+                var app = App.PublicClientApp;
                 IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
 
-                AuthenticationResult authResult = await App.PublicClientApp.AcquireTokenSilentAsync(App.ApiScopes, GetUserByPolicy(accounts, App.PolicySignUpSignIn), App.Authority, true);
+                AuthenticationResult authResult =  await (app as PublicClientApplication).AcquireTokenSilent(App.ApiScopes, null)
+                    .WithAccount(GetUserByPolicy(accounts, App.PolicySignUpSignIn))
+                    .WithForceRefresh(true)
+                    .ExecuteAsync(new System.Threading.CancellationToken());
+
                 DisplayBasicTokenInfo(authResult);
                 UpdateSignInState(true);
             }
