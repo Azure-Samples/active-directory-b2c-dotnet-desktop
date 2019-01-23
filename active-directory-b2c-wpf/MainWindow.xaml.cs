@@ -30,7 +30,7 @@ namespace active_directory_b2c_wpf
             try
             {
                 authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes, null)
-                    .WithAccount(GetUserByPolicy(accounts, App.PolicySignUpSignIn))
+                    .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                     .WithPrompt(Prompt.SelectAccount)
                     .ExecuteAsync(new System.Threading.CancellationToken());
 
@@ -44,7 +44,7 @@ namespace active_directory_b2c_wpf
                     if (ex.Message.Contains("AADB2C90118"))
                     {
                         authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes, null)
-                            .WithAccount(GetUserByPolicy(accounts, App.PolicySignUpSignIn))
+                            .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                             .WithPrompt(Prompt.SelectAccount)
                             .WithB2CAuthority(App.AuthorityResetPassword)
                             .ExecuteAsync(new System.Threading.CancellationToken());
@@ -72,7 +72,7 @@ namespace active_directory_b2c_wpf
             {
                 ResultText.Text = $"Calling API:{App.AuthorityEditProfile}";
                 AuthenticationResult authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes, null)
-                            .WithAccount(GetUserByPolicy(accounts, App.PolicySignUpSignIn))
+                            .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                             .WithPrompt(Prompt.NoPrompt)
                             .WithB2CAuthority(App.AuthorityEditProfile)
                             .ExecuteAsync(new System.Threading.CancellationToken());
@@ -93,7 +93,7 @@ namespace active_directory_b2c_wpf
             try
             {
                 authResult =  await (app as PublicClientApplication).AcquireTokenSilent(App.ApiScopes, null)
-                    .WithAccount(GetUserByPolicy(accounts, App.PolicySignUpSignIn))
+                    .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                     .WithForceRefresh(false)
                     .ExecuteAsync(new System.Threading.CancellationToken());
             }
@@ -105,7 +105,7 @@ namespace active_directory_b2c_wpf
                 try
                 {
                      authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes, null)
-                    .WithAccount(GetUserByPolicy(accounts, App.PolicySignUpSignIn))
+                    .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                     .ExecuteAsync(new System.Threading.CancellationToken());
                 }
                 catch (MsalException msalex)
@@ -213,7 +213,7 @@ namespace active_directory_b2c_wpf
                 IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
 
                 AuthenticationResult authResult =  await (app as PublicClientApplication).AcquireTokenSilent(App.ApiScopes, null)
-                    .WithAccount(GetUserByPolicy(accounts, App.PolicySignUpSignIn))
+                    .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                     .WithForceRefresh(true)
                     .ExecuteAsync(new System.Threading.CancellationToken());
 
@@ -234,7 +234,7 @@ namespace active_directory_b2c_wpf
             }
         }
 
-        private IAccount GetUserByPolicy(IEnumerable<IAccount> accounts, string policy)
+        private IAccount GetAccountByPolicy(IEnumerable<IAccount> accounts, string policy)
         {
             foreach (var account in accounts)
             {
