@@ -62,7 +62,7 @@ namespace active_directory_b2c_wpf
         {
             lock (FileLock)
             {
-                args.TokenCache.Deserialize(File.Exists(CacheFilePath)
+                args.TokenCache.DeserializeMsalV3(File.Exists(CacheFilePath)
                     ? ProtectedData.Unprotect(File.ReadAllBytes(CacheFilePath),
                                               null,
                                               DataProtectionScope.CurrentUser)
@@ -79,7 +79,7 @@ namespace active_directory_b2c_wpf
                 {
                     // reflect changesgs in the persistent store
                     File.WriteAllBytes(CacheFilePath,
-                                       ProtectedData.Protect(args.TokenCache.Serialize(),
+                                       ProtectedData.Protect(args.TokenCache.SerializeMsalV3(),
                                                              null,
                                                              DataProtectionScope.CurrentUser));
                 }
