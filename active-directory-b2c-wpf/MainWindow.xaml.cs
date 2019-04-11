@@ -30,7 +30,7 @@ namespace active_directory_b2c_wpf
             try
             {
                 authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
-                    .WithParentActivityOrWindow(this)
+                    .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                     .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                     .ExecuteAsync();
 
