@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using Microsoft.Identity.Client;
-using Microsoft.Identity.Client.AppConfig;
 
 namespace active_directory_b2c_wpf
 {
