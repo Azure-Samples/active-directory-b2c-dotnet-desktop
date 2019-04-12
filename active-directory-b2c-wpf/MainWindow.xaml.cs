@@ -29,7 +29,8 @@ namespace active_directory_b2c_wpf
             IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
             try
             {
-                authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes, null)
+                authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
+                    .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                     .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                     .ExecuteAsync();
 
@@ -42,7 +43,8 @@ namespace active_directory_b2c_wpf
                 {
                     if (ex.Message.Contains("AADB2C90118"))
                     {
-                        authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes, null)
+                        authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
+                            .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                             .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                             .WithPrompt(Prompt.SelectAccount)
                             .WithB2CAuthority(App.AuthorityResetPassword)
@@ -70,11 +72,13 @@ namespace active_directory_b2c_wpf
             try
             {
                 ResultText.Text = $"Calling API:{App.AuthorityEditProfile}";
-                AuthenticationResult authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes, GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
+                AuthenticationResult authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
+                            .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
+                            .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                             .WithB2CAuthority(App.AuthorityEditProfile)
                             .WithPrompt(Prompt.NoPrompt)
                             .ExecuteAsync(new System.Threading.CancellationToken());
-                    
+
                 DisplayBasicTokenInfo(authResult);
             }
             catch (Exception ex)
@@ -90,7 +94,7 @@ namespace active_directory_b2c_wpf
             IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
             try
             {
-                authResult =  await app.AcquireTokenSilent(App.ApiScopes, GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
+                authResult = await app.AcquireTokenSilent(App.ApiScopes, GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                     .ExecuteAsync();
             }
             catch (MsalUiRequiredException ex)
@@ -100,8 +104,10 @@ namespace active_directory_b2c_wpf
 
                 try
                 {
-                     authResult = await app.AcquireTokenInteractive(App.ApiScopes, GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
-                    .ExecuteAsync();
+                    authResult = await app.AcquireTokenInteractive(App.ApiScopes)
+                        .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
+                        .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
+                        .ExecuteAsync();
                 }
                 catch (MsalException msalex)
                 {
@@ -205,7 +211,8 @@ namespace active_directory_b2c_wpf
                 var app = App.PublicClientApp;
                 IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
 
-                AuthenticationResult authResult =  await (app as PublicClientApplication).AcquireTokenSilent(App.ApiScopes, GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
+                AuthenticationResult authResult = await app.AcquireTokenSilent(App.ApiScopes, 
+                                                                               GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                     .ExecuteAsync();
 
                 DisplayBasicTokenInfo(authResult);
