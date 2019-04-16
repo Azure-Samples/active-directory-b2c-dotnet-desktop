@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.Identity.Client.ApiConfig;
+using System.Windows.Interop;
 
 namespace active_directory_b2c_wpf
 {
