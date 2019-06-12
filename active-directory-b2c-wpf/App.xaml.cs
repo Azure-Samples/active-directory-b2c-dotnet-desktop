@@ -17,7 +17,7 @@ namespace active_directory_b2c_wpf
         public static string[] ApiScopes = { "https://fabrikamb2c.onmicrosoft.com/helloapi/demo.read" };
         public static string ApiEndpoint = "https://fabrikamb2chello.azurewebsites.net/hello";
 
-        private static string BaseAuthority = "https://fabrikamb2c.b2clogin.com/tfp/{tenant}/{policy}/";
+        private static string BaseAuthority = "https://login.microsoftonline.com/tfp/{tenant}/{policy}/";
         public static string Authority = BaseAuthority.Replace("{tenant}", Tenant).Replace("{policy}", PolicySignUpSignIn);
         public static string AuthorityEditProfile = BaseAuthority.Replace("{tenant}", Tenant).Replace("{policy}", PolicyEditProfile);
         public static string AuthorityResetPassword = BaseAuthority.Replace("{tenant}", Tenant).Replace("{policy}", PolicyResetPassword);

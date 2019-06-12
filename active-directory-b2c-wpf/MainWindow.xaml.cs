@@ -8,6 +8,8 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
+using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace active_directory_b2c_wpf
 {
@@ -198,10 +200,34 @@ namespace active_directory_b2c_wpf
             TokenInfoText.Text = "";
             if (authResult != null)
             {
-                TokenInfoText.Text += $"Name: {authResult.Account.Username}" + Environment.NewLine;
-                TokenInfoText.Text += $"Token Expires: {authResult.ExpiresOn.ToLocalTime()}" + Environment.NewLine;
+                JObject user = ParseIdToken(authResult.IdToken);
+
+                TokenInfoText.Text += $"Name: {user["name"]?.ToString()}" + Environment.NewLine;
+                TokenInfoText.Text += $"Identity Provider: {user["idp"]?.ToString()}" + Environment.NewLine;
                 TokenInfoText.Text += $"Tenant Id: {authResult.TenantId}" + Environment.NewLine;
+                var emails = user["emails"] as JArray;
+                if (emails != null)
+                {
+                    TokenInfoText.Text += $"Emails: {emails[0].ToString()}" + Environment.NewLine;
+                }
             }
+        }
+
+        JObject ParseIdToken(string idToken)
+        {
+            // Get the piece with actual user info
+            idToken = idToken.Split('.')[1];
+            idToken = Base64UrlDecode(idToken);
+            return JObject.Parse(idToken);
+        }
+
+        private string Base64UrlDecode(string s)
+        {
+            s = s.Replace('-', '+').Replace('_', '/');
+            s = s.PadRight(s.Length + (4 - s.Length % 4) % 4, '=');
+            var byteArray = Convert.FromBase64String(s);
+            var decoded = Encoding.UTF8.GetString(byteArray, 0, byteArray.Count());
+            return decoded;
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
