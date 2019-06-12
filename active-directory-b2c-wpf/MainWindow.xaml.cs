@@ -31,6 +31,7 @@ namespace active_directory_b2c_wpf
             IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
             try
             {
+                ResultText.Text = "";
                 authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
                     .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                     .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
@@ -247,7 +248,7 @@ namespace active_directory_b2c_wpf
             catch (MsalUiRequiredException ex)
             {
                 // Ignore, user will need to sign in interactively.
-                ResultText.Text = "You need to sign-in first";
+                ResultText.Text = "You need to sign-in first, and then Call API";
 
                 //Un-comment for debugging purposes
                 //ResultText.Text = $"Error Acquiring Token Silently:{Environment.NewLine}{ex}";
