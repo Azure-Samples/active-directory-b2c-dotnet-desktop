@@ -6,7 +6,7 @@ author: jmprieur
 
 # WPF application signing in users with Azure Active Directory B2C and calling an API
 
-> This branch is using MSAL.NET 3.x. If you are interested in a previous version of the sample using
+> This branch is using MSAL.NET 4.x. If you are interested in a previous version of the sample using
 > MSAL.NET 2.x, go to the [master](https://github.com/Azure-Samples/active-directory-b2c-dotnet-desktop/tree/master) branch
 
 
