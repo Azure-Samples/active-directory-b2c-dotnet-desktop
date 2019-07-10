@@ -28,6 +28,7 @@ namespace active_directory_b2c_wpf
         {
             PublicClientApp = PublicClientApplicationBuilder.Create(ClientId)
                 .WithB2CAuthority(Authority)
+                .WithDefaultRedirectUri()
                 .Build();
 
             TokenCacheHelper.Bind(PublicClientApp.UserTokenCache);
