@@ -271,6 +271,11 @@ namespace active_directory_b2c_wpf
                 SignOutButton.Visibility = Visibility.Visible;
 
                 ROPCButton.Visibility = Visibility.Collapsed;
+                UsernameLabel.Visibility = Visibility.Collapsed;
+                UsernameTextBox.Visibility = Visibility.Collapsed;
+                PasswordLabel.Visibility = Visibility.Collapsed;
+                PasswordTextBox.Visibility = Visibility.Collapsed;
+
                 SignInButton.Visibility = Visibility.Collapsed;
             }
             else
@@ -283,6 +288,11 @@ namespace active_directory_b2c_wpf
                 SignOutButton.Visibility = Visibility.Collapsed;
 
                 SignInButton.Visibility = Visibility.Visible;
+                UsernameLabel.Visibility = Visibility.Visible;
+                UsernameTextBox.Visibility = Visibility.Visible;
+                PasswordLabel.Visibility = Visibility.Visible;
+                PasswordTextBox.Visibility = Visibility.Visible;
+
                 ROPCButton.Visibility = Visibility.Visible;
             }
         }
