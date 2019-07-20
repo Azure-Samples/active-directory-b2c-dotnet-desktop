@@ -21,14 +21,15 @@
             <Button x:Name="SignOutButton" Content="Sign Out" HorizontalAlignment="Right" Padding="5" Click="SignOutButton_Click" Margin="5" Visibility="Collapsed" FontFamily="Segoe Ui"/>
         </StackPanel>
 
-        <Label Grid.Row="1" Content="API Call Results" Margin="0,0,0,-5" FontFamily="Segoe Ui" />
+        <Label Grid.Row="1" Content="API Call Results" Margin="0,0,419,116" FontFamily="Segoe Ui" Grid.RowSpan="2" />
         <TextBox Grid.Row="2" x:Name="ResultText" TextWrapping="Wrap" Margin="5,5,161,5" FontFamily="Segoe Ui" ScrollViewer.VerticalScrollBarVisibility="Auto" />
-        <Label Grid.Row="3" Content="Token Info" Margin="0,0,0,-5" FontFamily="Segoe Ui" />
+        <Label Grid.Row="3" Content="Token Info" Margin="0,0,434,116.5" FontFamily="Segoe Ui" Grid.RowSpan="2" />
         <TextBox Grid.Row="4" x:Name="TokenInfoText" TextWrapping="Wrap" Margin="5" FontFamily="Segoe Ui" ScrollViewer.VerticalScrollBarVisibility="Auto" />
         <Button x:Name="ROPCButton" Content="ROPC" HorizontalAlignment="Right" Padding="5" Click="ROPCButton_Click" Margin="0,104,94,7" FontFamily="Segoe Ui" RenderTransformOrigin="8.887,0.51" Grid.Row="2" Grid.RowSpan="2"/>
         <TextBox x:Name="UsernameTextBox" HorizontalAlignment="Left" Height="23" Margin="384,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Row="2"/>
         <TextBox x:Name="PasswordTextBox" HorizontalAlignment="Left" Height="23" Margin="384,76,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Row="2"/>
         <Label x:Name="UsernameLabel" Content="Username" HorizontalAlignment="Left" Height="24" Margin="378,0,0,0" Grid.Row="2" VerticalAlignment="Top" Width="78"/>
         <Label x:Name="PasswordLabel" Content="Password" HorizontalAlignment="Left" Height="24" Margin="384,52,0,0" Grid.Row="2" VerticalAlignment="Top" Width="78"/>
+        <GroupBox Header="" HorizontalAlignment="Left" Height="144" Margin="373,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="137" Grid.RowSpan="3"/>
     </Grid>
 </Window>
