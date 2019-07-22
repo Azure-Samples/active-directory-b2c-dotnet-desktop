@@ -40,7 +40,7 @@ namespace active_directory_b2c_wpf
                 DisplayBasicTokenInfo(authResult);
                 UpdateSignInState(true);
             }
-            catch (MsalServiceException ex)
+            catch (MsalException ex)
             {
                 try
                 {
