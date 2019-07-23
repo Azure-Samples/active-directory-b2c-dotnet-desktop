@@ -37,10 +37,10 @@ namespace active_directory_b2c_wpf
                     .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                     .ExecuteAsync();
 
-                DisplayBasicTokenInfo(authResult);
+                DisplayUserInfo(authResult);
                 UpdateSignInState(true);
             }
-            catch (MsalServiceException ex)
+            catch (MsalException ex)
             {
                 try
                 {
@@ -82,7 +82,7 @@ namespace active_directory_b2c_wpf
                             .WithPrompt(Prompt.NoPrompt)
                             .ExecuteAsync(new System.Threading.CancellationToken());
 
-                DisplayBasicTokenInfo(authResult);
+                DisplayUserInfo(authResult);
             }
             catch (Exception ex)
             {
@@ -126,7 +126,7 @@ namespace active_directory_b2c_wpf
             if (authResult != null)
             {
                 ResultText.Text = await GetHttpContentWithToken(App.ApiEndpoint, authResult.AccessToken);
-                DisplayBasicTokenInfo(authResult);
+                DisplayUserInfo(authResult);
             }
         }
 
@@ -196,27 +196,34 @@ namespace active_directory_b2c_wpf
             }
         }
 
-        private void DisplayBasicTokenInfo(AuthenticationResult authResult)
+        private void DisplayUserInfo(AuthenticationResult authResult)
         {
             TokenInfoText.Text = "";
             if (authResult != null)
             {
                 JObject user = ParseIdToken(authResult.IdToken);
-
+                
                 TokenInfoText.Text += $"Name: {user["name"]?.ToString()}" + Environment.NewLine;
-                TokenInfoText.Text += $"Identity Provider: {user["idp"]?.ToString()}" + Environment.NewLine;
-                TokenInfoText.Text += $"Tenant Id: {authResult.TenantId}" + Environment.NewLine;
-                var emails = user["emails"] as JArray;
-                if (emails != null)
+                TokenInfoText.Text += $"User Identifier: {user["oid"]?.ToString()}" + Environment.NewLine;
+                TokenInfoText.Text += $"Street Address: {user["streetAddress"]?.ToString()}" + Environment.NewLine;
+                TokenInfoText.Text += $"City: {user["city"]?.ToString()}" + Environment.NewLine;
+                TokenInfoText.Text += $"State: {user["state"]?.ToString()}" + Environment.NewLine;
+                TokenInfoText.Text += $"Country: {user["country"]?.ToString()}" + Environment.NewLine;
+                TokenInfoText.Text += $"Job Title: {user["jobTitle"]?.ToString()}" + Environment.NewLine;
+
+                if (user["emails"] is JArray emails)
                 {
                     TokenInfoText.Text += $"Emails: {emails[0].ToString()}" + Environment.NewLine;
                 }
+                TokenInfoText.Text += $"Identity Provider: {user["iss"]?.ToString()}" + Environment.NewLine;
+                TokenInfoText.Text += $"Policy: {user["tfp"]?.ToString()}" + Environment.NewLine;
+
             }
         }
 
         JObject ParseIdToken(string idToken)
         {
-            // Get the piece with actual user info
+            // Parse the idToken to get user info
             idToken = idToken.Split('.')[1];
             idToken = Base64UrlDecode(idToken);
             return JObject.Parse(idToken);
@@ -242,16 +249,13 @@ namespace active_directory_b2c_wpf
                                                                                GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                     .ExecuteAsync();
 
-                DisplayBasicTokenInfo(authResult);
+                DisplayUserInfo(authResult);
                 UpdateSignInState(true);
             }
             catch (MsalUiRequiredException ex)
             {
                 // Ignore, user will need to sign in interactively.
                 ResultText.Text = "You need to sign-in first, and then Call API";
-
-                //Un-comment for debugging purposes
-                //ResultText.Text = $"Error Acquiring Token Silently:{Environment.NewLine}{ex}";
             }
             catch (Exception ex)
             {
