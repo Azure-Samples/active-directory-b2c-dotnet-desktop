@@ -19,7 +19,7 @@ namespace active_directory_b2c_wpf
         public static string ApiEndpoint = "https://fabrikamb2chello.azurewebsites.net/hello";
 
         private static string AuthorityBase = $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
-        public static string Authority = $"{AuthorityBase}{PolicySignUpSignIn}";
+        public static string AuthoritySignInSignUp = $"{AuthorityBase}{PolicySignUpSignIn}";
         public static string AuthorityEditProfile = $"{AuthorityBase}{PolicyEditProfile}";
         public static string AuthorityResetPassword = $"{AuthorityBase}{PolicyResetPassword}";
 
@@ -28,7 +28,7 @@ namespace active_directory_b2c_wpf
         static App()
         {
             PublicClientApp = PublicClientApplicationBuilder.Create(ClientId)
-                .WithB2CAuthority(Authority)
+                .WithB2CAuthority(AuthoritySignInSignUp)
                 .Build();
 
             TokenCacheHelper.Bind(PublicClientApp.UserTokenCache);
