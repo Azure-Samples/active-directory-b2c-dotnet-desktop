@@ -34,7 +34,7 @@ Once signed-in, clicking on the **Call API** button shows the display name you u
 
 From your shell or command line:
 
-```
+```bash
 git clone https://github.com/Azure-Samples/active-directory-b2c-dotnet-desktop.git
 ```
 
