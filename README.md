@@ -59,7 +59,7 @@ First, you'll need an Azure AD B2C tenant. If you don't have an existing Azure A
 
 ### Step 2: Create your own policies
 
-This sample uses three types of policies: a unified sign-up/sign-in policy, a profile editing policy, and a password reset policy.  Create one policy of each type by following [the built-in policy instructions](https://azure.microsoft.com/documentation/articles/active-directory-b2c-reference-policies). You may choose to include as many or as few identity providers as you wish.
+This sample uses three types of policies: a unified sign-up/sign-in policy, a profile editing policy, and a password reset policy.  Create one policy of each type by following [the built-in policy instructions](https://docs.microsoft.com/azure/active-directory-b2c/active-directory-b2c-reference-policies). You may choose to include as many or as few identity providers as you wish.
 
 If you already have existing policies in your Azure AD B2C tenant, feel free to re-use those policies in this sample.
 
