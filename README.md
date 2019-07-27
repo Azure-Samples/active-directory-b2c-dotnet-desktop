@@ -55,7 +55,7 @@ In the previous section, you learned how to run the sample application using the
 
 ### Step 1: Get your own Azure AD B2C tenant
 
-First, you'll need an Azure AD B2C tenant. If you don't have an existing Azure AD B2C tenant that you can use for testing purposes, you can create your own by following [these instruction](https://azure.microsoft.com/documentation/articles/active-directory-b2c-get-started/).
+First, you'll need an Azure AD B2C tenant. If you don't have an existing Azure AD B2C tenant that you can use for testing purposes, you can create your own by following [these instruction](https://docs.microsoft.com/azure/active-directory-b2c/tutorial-create-tenant).
 
 ### Step 2: Create your own policies
 
