@@ -73,7 +73,7 @@ You must replace the demo environment Web API with your own Web API. If you do n
 
 First, clone the Node.js Web API sample repository into its own directory, for example:  
 
-```
+```bash
 cd ..
 git clone https://github.com/Azure-Samples/active-directory-b2c-javascript-nodejs-webapi.git
 ```
