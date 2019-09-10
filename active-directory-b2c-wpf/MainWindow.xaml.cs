@@ -38,13 +38,11 @@ namespace active_directory_b2c_wpf
         {
             AuthenticationResult authResult = null;
             var app = App.PublicClientApp;
-            IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
             try
             {
                 ResultText.Text = "";
                 authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
                     .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
-                    .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                     .ExecuteAsync();
 
                 DisplayUserInfo(authResult);
@@ -58,7 +56,6 @@ namespace active_directory_b2c_wpf
                     {
                         authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
                             .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
-                            .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                             .WithPrompt(Prompt.SelectAccount)
                             .WithB2CAuthority(App.AuthorityResetPassword)
                             .ExecuteAsync();
@@ -68,25 +65,25 @@ namespace active_directory_b2c_wpf
                         ResultText.Text = $"Error Acquiring Token:{Environment.NewLine}{ex}";
                     }
                 }
-                catch (Exception)
+                catch (Exception exe)
                 {
+                    ResultText.Text = $"Error Acquiring Token:{Environment.NewLine}{exe}";
                 }
             }
             catch (Exception ex)
             {
-                ResultText.Text = $"Users:{string.Join(",", accounts.Select(u => u.Username))}{Environment.NewLine}Error Acquiring Token:{Environment.NewLine}{ex}";
+                ResultText.Text = $"Error Acquiring Token:{Environment.NewLine}{ex}";
             }
         }
 
         private async void EditProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
             var app = App.PublicClientApp;
             try
             {
                 ResultText.Text = $"Calling API:{App.AuthorityEditProfile}";
+
                 AuthenticationResult authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
-                            .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                             .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                             .WithB2CAuthority(App.AuthorityEditProfile)
                             .WithPrompt(Prompt.NoPrompt)
@@ -107,18 +104,18 @@ namespace active_directory_b2c_wpf
             IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
             try
             {
-                authResult = await app.AcquireTokenSilent(App.ApiScopes, GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
+                authResult = await app.AcquireTokenSilent(App.ApiScopes, GetAccountByPolicy(accounts, App.AuthorityEditProfile))
                     .ExecuteAsync();
             }
             catch (MsalUiRequiredException ex)
             {
-                // A MsalUiRequiredException happened on AcquireTokenSilentAsync. This indicates you need to call AcquireTokenAsync to acquire a token
+                // A MsalUiRequiredException happened on AcquireTokenSilentAsync. 
+                // This indicates you need to call AcquireTokenAsync to acquire a token
                 Debug.WriteLine($"MsalUiRequiredException: {ex.Message}");
 
                 try
                 {
                     authResult = await app.AcquireTokenInteractive(App.ApiScopes)
-                        .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                         .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                         .ExecuteAsync();
                 }
@@ -137,7 +134,7 @@ namespace active_directory_b2c_wpf
             {
                 if (string.IsNullOrEmpty(authResult.AccessToken))
                 {
-                    ResultText.Text = "Access token is null (could be expired). Please do interactive log in again." ;
+                    ResultText.Text = "Access token is null (could be expired). Please do interactive log-in again." ;
                 }
                 else
                 {
@@ -258,8 +255,6 @@ namespace active_directory_b2c_wpf
                     TokenInfoText.Text += $"Emails: {emails[0].ToString()}" + Environment.NewLine;
                 }
                 TokenInfoText.Text += $"Identity Provider: {user["iss"]?.ToString()}" + Environment.NewLine;
-                TokenInfoText.Text += $"Policy: {user["tfp"]?.ToString()}" + Environment.NewLine;
-
             }
         }
 

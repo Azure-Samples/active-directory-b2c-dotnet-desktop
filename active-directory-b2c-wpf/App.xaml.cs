@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Windows;
 using Microsoft.Identity.Client;
@@ -13,7 +11,7 @@ namespace active_directory_b2c_wpf
     public partial class App : Application
     {
         private static readonly string Tenant = "fabrikamb2c.onmicrosoft.com";
-        private static readonly string AzureAdB2CHostname = "fabrikamb2c.b2clogin.com"; //"login.microsoftonline.com"; //
+        private static readonly string AzureAdB2CHostname = "fabrikamb2c.b2clogin.com";
         private static readonly string ClientId = "841e1190-d73a-450c-9d68-f5cf16b78e81";
         public static string PolicySignUpSignIn = "b2c_1_susi";
         public static string PolicyEditProfile = "b2c_1_edit_profile";
@@ -33,7 +31,7 @@ namespace active_directory_b2c_wpf
         {
             PublicClientApp = PublicClientApplicationBuilder.Create(ClientId)
                 .WithB2CAuthority(AuthoritySignInSignUp)
-                .WithLogging(Log, LogLevel.Verbose, true)
+                .WithLogging(Log, LogLevel.Verbose, false) //PiiEnabled set to false
                 .Build();
 
             TokenCacheHelper.Bind(PublicClientApp.UserTokenCache);
