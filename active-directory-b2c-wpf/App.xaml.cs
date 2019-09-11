@@ -18,8 +18,7 @@ namespace active_directory_b2c_wpf
         public static string PolicyResetPassword = "b2c_1_reset";
 
         public static string[] ApiScopes = { "https://fabrikamb2c.onmicrosoft.com/helloapi/demo.read" };
-        public static string ApiEndpoint = "http://localhost:5000/hello";
-
+        public static string ApiEndpoint = "https://fabrikamb2chello.azurewebsites.net/hello";
         private static string AuthorityBase = $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
         public static string AuthoritySignInSignUp = $"{AuthorityBase}{PolicySignUpSignIn}";
         public static string AuthorityEditProfile = $"{AuthorityBase}{PolicyEditProfile}";
