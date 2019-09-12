@@ -18,23 +18,31 @@ namespace active_directory_b2c_wpf
     /// </summary>
     public partial class MainWindow : Window
     {
-
         public MainWindow()
         {
             InitializeComponent();
+        }
+        
+        private IAccount GetAccountByPolicy(IEnumerable<IAccount> accounts, string policy)
+        {
+            foreach (var account in accounts)
+            {
+                string accountIdentifier = account.HomeAccountId.ObjectId.Split('.')[0];
+                if (accountIdentifier.EndsWith(policy.ToLower())) return account;
+            }
+
+            return null;
         }
 
         private async void SignInButton_Click(object sender, RoutedEventArgs e)
         {
             AuthenticationResult authResult = null;
             var app = App.PublicClientApp;
-            IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
             try
             {
                 ResultText.Text = "";
                 authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
                     .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
-                    .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                     .ExecuteAsync();
 
                 DisplayUserInfo(authResult);
@@ -48,7 +56,6 @@ namespace active_directory_b2c_wpf
                     {
                         authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
                             .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
-                            .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                             .WithPrompt(Prompt.SelectAccount)
                             .WithB2CAuthority(App.AuthorityResetPassword)
                             .ExecuteAsync();
@@ -58,25 +65,25 @@ namespace active_directory_b2c_wpf
                         ResultText.Text = $"Error Acquiring Token:{Environment.NewLine}{ex}";
                     }
                 }
-                catch (Exception)
+                catch (Exception exe)
                 {
+                    ResultText.Text = $"Error Acquiring Token:{Environment.NewLine}{exe}";
                 }
             }
             catch (Exception ex)
             {
-                ResultText.Text = $"Users:{string.Join(",", accounts.Select(u => u.Username))}{Environment.NewLine}Error Acquiring Token:{Environment.NewLine}{ex}";
+                ResultText.Text = $"Error Acquiring Token:{Environment.NewLine}{ex}";
             }
         }
 
         private async void EditProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
             var app = App.PublicClientApp;
             try
             {
                 ResultText.Text = $"Calling API:{App.AuthorityEditProfile}";
+
                 AuthenticationResult authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
-                            .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                             .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                             .WithB2CAuthority(App.AuthorityEditProfile)
                             .WithPrompt(Prompt.NoPrompt)
@@ -102,13 +109,13 @@ namespace active_directory_b2c_wpf
             }
             catch (MsalUiRequiredException ex)
             {
-                // A MsalUiRequiredException happened on AcquireTokenSilentAsync. This indicates you need to call AcquireTokenAsync to acquire a token
+                // A MsalUiRequiredException happened on AcquireTokenSilentAsync. 
+                // This indicates you need to call AcquireTokenAsync to acquire a token
                 Debug.WriteLine($"MsalUiRequiredException: {ex.Message}");
 
                 try
                 {
                     authResult = await app.AcquireTokenInteractive(App.ApiScopes)
-                        .WithAccount(GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
                         .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                         .ExecuteAsync();
                 }
@@ -125,8 +132,15 @@ namespace active_directory_b2c_wpf
 
             if (authResult != null)
             {
-                ResultText.Text = await GetHttpContentWithToken(App.ApiEndpoint, authResult.AccessToken);
-                DisplayUserInfo(authResult);
+                if (string.IsNullOrEmpty(authResult.AccessToken))
+                {
+                    ResultText.Text = "Access token is null (could be expired). Please do interactive log-in again." ;
+                }
+                else
+                {
+                    ResultText.Text = await GetHttpContentWithToken(App.ApiEndpoint, authResult.AccessToken);
+                    DisplayUserInfo(authResult);
+                }
             }
         }
 
@@ -173,6 +187,31 @@ namespace active_directory_b2c_wpf
             }
         }
 
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var app = App.PublicClientApp;
+                IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
+
+                AuthenticationResult authResult = await app.AcquireTokenSilent(App.ApiScopes,
+                                                                               GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
+                    .ExecuteAsync();
+
+                DisplayUserInfo(authResult);
+                UpdateSignInState(true);
+            }
+            catch (MsalUiRequiredException ex)
+            {
+                // Ignore, user will need to sign in interactively.
+                ResultText.Text = "You need to sign-in first, and then Call API";
+            }
+            catch (Exception ex)
+            {
+                ResultText.Text = $"Error Acquiring Token Silently:{Environment.NewLine}{ex}";
+            }
+        }
+        
         private void UpdateSignInState(bool signedIn)
         {
             if (signedIn)
@@ -202,7 +241,7 @@ namespace active_directory_b2c_wpf
             if (authResult != null)
             {
                 JObject user = ParseIdToken(authResult.IdToken);
-                
+
                 TokenInfoText.Text += $"Name: {user["name"]?.ToString()}" + Environment.NewLine;
                 TokenInfoText.Text += $"User Identifier: {user["oid"]?.ToString()}" + Environment.NewLine;
                 TokenInfoText.Text += $"Street Address: {user["streetAddress"]?.ToString()}" + Environment.NewLine;
@@ -216,8 +255,6 @@ namespace active_directory_b2c_wpf
                     TokenInfoText.Text += $"Emails: {emails[0].ToString()}" + Environment.NewLine;
                 }
                 TokenInfoText.Text += $"Identity Provider: {user["iss"]?.ToString()}" + Environment.NewLine;
-                TokenInfoText.Text += $"Policy: {user["tfp"]?.ToString()}" + Environment.NewLine;
-
             }
         }
 
@@ -236,42 +273,6 @@ namespace active_directory_b2c_wpf
             var byteArray = Convert.FromBase64String(s);
             var decoded = Encoding.UTF8.GetString(byteArray, 0, byteArray.Count());
             return decoded;
-        }
-
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var app = App.PublicClientApp;
-                IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
-
-                AuthenticationResult authResult = await app.AcquireTokenSilent(App.ApiScopes, 
-                                                                               GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
-                    .ExecuteAsync();
-
-                DisplayUserInfo(authResult);
-                UpdateSignInState(true);
-            }
-            catch (MsalUiRequiredException ex)
-            {
-                // Ignore, user will need to sign in interactively.
-                ResultText.Text = "You need to sign-in first, and then Call API";
-            }
-            catch (Exception ex)
-            {
-                ResultText.Text = $"Error Acquiring Token Silently:{Environment.NewLine}{ex}";
-            }
-        }
-
-        private IAccount GetAccountByPolicy(IEnumerable<IAccount> accounts, string policy)
-        {
-            foreach (var account in accounts)
-            {
-                string accountIdentifier = account.HomeAccountId.ObjectId.Split('.')[0];
-                if (accountIdentifier.EndsWith(policy.ToLower())) return account;
-            }
-
-            return null;
         }
     }
 }
