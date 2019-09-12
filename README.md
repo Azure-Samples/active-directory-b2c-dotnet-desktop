@@ -21,7 +21,7 @@ This simple sample demonstrates how to use the [Microsoft Authentication Library
 There are two ways to run this sample:
 
 1. **Using the demo environment** - The sample is already configured to use a demo environment and can be run simply by downloading this repository and running the app on your machine. See steps below for Running with demo environment.
-2. **Using your own Azure AD B2C tenant** - If you would like to use your own Azure AD B2C configuration, follow the steps listed below for Using your own Azure AD B2C tenant.
+2. **Using your own Azure AD B2C tenant** - If you would like to use your own Azure AD B2C configuration, follow the steps listed below for Using your own Azure AD B2C tenant. Please note, the api call will only work with domains using `{tenantName}.b2clogin.com`, as the node.js api used for the api call has been updated to handle `b2clogin.com` and not `login.microsoftonline.com`. If using `login.microsoftonline.com` or a custom b2c domain, you will need to host your own web api (see step 3 below), otherwise, you will see "authorized" when making the api call with this sample as-is. 
 
 ## Using the demo environment
 
