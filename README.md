@@ -1,7 +1,11 @@
 ---
-services: active-directory-b2c
-platforms: dotnet
-author: jmprieur
+page_type: sample
+languages:
+- csharp
+products:
+- azure
+description: "This simple sample demonstrates how to use the Microsoft Authentication Library (MSAL) for .NET to get an access token and call an API secured by Azure AD B2C."
+urlFragment: active-directory-b2c-dotnet-desktop
 ---
 
 # WPF application signing in users with Azure Active Directory B2C and calling an API
