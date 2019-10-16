@@ -38,8 +38,10 @@ namespace active_directory_b2c_wpf
         {
             PublicClientApp = PublicClientApplicationBuilder.Create(ClientId)
                 .WithB2CAuthority(AuthoritySignInSignUp)
+                // OR
                 .WithAuthority(AuthorityBase, PolicySignUpSignIn)
-                .WithLogging(Log, LogLevel.Verbose, false) //PiiEnabled set to false
+                // Or
+                .WithAuthority("https://customdomain.com/"+PolicySignUpSignIn, validateAuthority:false)
                 .Build();
 
             TokenCacheHelper.Bind(PublicClientApp.UserTokenCache);
