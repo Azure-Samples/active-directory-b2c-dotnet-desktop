@@ -5,6 +5,14 @@ using Microsoft.Identity.Client;
 
 namespace active_directory_b2c_wpf
 {
+    public static class Extension
+    {
+        public static AbstractApplicationBuilder<PublicClientApplicationBuilder> WithAuthority(this AbstractApplicationBuilder<PublicClientApplicationBuilder> b, string authority, string policy)
+        {
+            return b.WithB2CAuthority(authority+"/"+policy);
+        }
+    }
+
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
@@ -30,6 +38,7 @@ namespace active_directory_b2c_wpf
         {
             PublicClientApp = PublicClientApplicationBuilder.Create(ClientId)
                 .WithB2CAuthority(AuthoritySignInSignUp)
+                .WithAuthority(AuthorityBase, PolicySignUpSignIn)
                 .WithLogging(Log, LogLevel.Verbose, false) //PiiEnabled set to false
                 .Build();
 
