@@ -27,54 +27,6 @@ namespace active_directory_b2c_wpf
             IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
             try
             {
-                authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, GetUserByPolicy(accounts, App.PolicySignUpSignIn), UIBehavior.SelectAccount, string.Empty, null, App.Authority);
-                DisplayBasicTokenInfo(authResult);
-                UpdateSignInState(true);
-            }
-            catch (MsalServiceException ex)
-            {
-                try
-                {
-                    if (ex.Message.Contains("AADB2C90118"))
-                    {
-                        authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, GetUserByPolicy(accounts, App.PolicySignUpSignIn), UIBehavior.SelectAccount, string.Empty, null, App.AuthorityResetPassword);
-                    }
-                    else
-                    {
-                        ResultText.Text = $"Error Acquiring Token:{Environment.NewLine}{ex}";
-                    }
-                }
-                catch (Exception)
-                {
-                }
-            }
-            catch (Exception ex)
-            {
-                ResultText.Text = $"Users:{string.Join(",", accounts.Select(u => u.Username))}{Environment.NewLine}Error Acquiring Token:{Environment.NewLine}{ex}";
-            }
-        }
-
-        private async void EditProfileButton_Click(object sender, RoutedEventArgs e)
-        {
-            IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
-            try
-            {
-                ResultText.Text = $"Calling API:{App.AuthorityEditProfile}";
-                AuthenticationResult authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, GetUserByPolicy(accounts, App.PolicyEditProfile), UIBehavior.NoPrompt, string.Empty, null, App.AuthorityEditProfile);
-                DisplayBasicTokenInfo(authResult);
-            }
-            catch (Exception ex)
-            {
-                ResultText.Text = $"Session has expired, please sign out and back in.{App.AuthorityEditProfile}{Environment.NewLine}{ex}";
-            }
-        }
-
-        private async void CallApiButton_Click(object sender, RoutedEventArgs e)
-        {
-            AuthenticationResult authResult = null;
-            IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
-            try
-            {
                 authResult = await App.PublicClientApp.AcquireTokenSilentAsync(App.ApiScopes, GetUserByPolicy(accounts, App.PolicySignUpSignIn), App.Authority, false);
             }
             catch (MsalUiRequiredException ex)
@@ -82,26 +34,27 @@ namespace active_directory_b2c_wpf
                 // A MsalUiRequiredException happened on AcquireTokenSilentAsync. This indicates you need to call AcquireTokenAsync to acquire a token
                 Debug.WriteLine($"MsalUiRequiredException: {ex.Message}");
 
-                try
-                {
-                    authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes, GetUserByPolicy(accounts, App.PolicySignUpSignIn));
-                }
-                catch (MsalException msalex)
-                {
-                    ResultText.Text = $"Error Acquiring Token:{Environment.NewLine}{msalex}";
-                }
+                authResult = await App.PublicClientApp.AcquireTokenAsync(App.ApiScopes);
+                CallProtectedApiAsync(authResult);
+                UpdateSignInState(true);
             }
+
             catch (Exception ex)
             {
-                ResultText.Text = $"Error Acquiring Token Silently:{Environment.NewLine}{ex}";
+                ResultText.Text = $"Users:{string.Join(",", accounts.Select(u => u.Username))}{Environment.NewLine}Error Acquiring Token:{Environment.NewLine}{ex}";
+            }
+        }
+
+        private async void CallProtectedApiAsync(AuthenticationResult authResult)
+        {
+            if(string.IsNullOrEmpty(authResult.AccessToken))
+            {
+                ResultText.Text = "Auth result does not contain an access token. Cannot call the protected resource.";
                 return;
             }
 
-            if (authResult != null)
-            {
-                ResultText.Text = await GetHttpContentWithToken(App.ApiEndpoint, authResult.AccessToken);
-                DisplayBasicTokenInfo(authResult);
-            }
+            ResultText.Text = await GetHttpContentWithToken(App.ApiEndpoint, authResult.AccessToken);
+            DisplayBasicTokenInfo(authResult);
         }
 
         /// <summary>
@@ -151,8 +104,6 @@ namespace active_directory_b2c_wpf
         {
             if (signedIn)
             {
-                CallApiButton.Visibility = Visibility.Visible;
-                EditProfileButton.Visibility = Visibility.Visible;
                 SignOutButton.Visibility = Visibility.Visible;
 
                 SignInButton.Visibility = Visibility.Collapsed;
@@ -162,8 +113,6 @@ namespace active_directory_b2c_wpf
                 ResultText.Text = "";
                 TokenInfoText.Text = "";
 
-                CallApiButton.Visibility = Visibility.Collapsed;
-                EditProfileButton.Visibility = Visibility.Collapsed;
                 SignOutButton.Visibility = Visibility.Collapsed;
 
                 SignInButton.Visibility = Visibility.Visible;
