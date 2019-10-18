@@ -5,13 +5,6 @@ using Microsoft.Identity.Client;
 
 namespace active_directory_b2c_wpf
 {
-    public static class Extension
-    {
-        public static AbstractApplicationBuilder<PublicClientApplicationBuilder> WithAuthority(this AbstractApplicationBuilder<PublicClientApplicationBuilder> b, string authority, string policy)
-        {
-            return b.WithB2CAuthority(authority+"/"+policy);
-        }
-    }
 
     /// <summary>
     /// Interaction logic for App.xaml
@@ -27,7 +20,7 @@ namespace active_directory_b2c_wpf
 
         public static string[] ApiScopes = { "https://fabrikamb2c.onmicrosoft.com/helloapi/demo.read" };
         public static string ApiEndpoint = "https://fabrikamb2chello.azurewebsites.net/hello";
-        private static string AuthorityBase = $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
+        public static string AuthorityBase = $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
         public static string AuthoritySignInSignUp = $"{AuthorityBase}{PolicySignUpSignIn}";
         public static string AuthorityEditProfile = $"{AuthorityBase}{PolicyEditProfile}";
         public static string AuthorityResetPassword = $"{AuthorityBase}{PolicyResetPassword}";
@@ -40,8 +33,8 @@ namespace active_directory_b2c_wpf
                 .WithB2CAuthority(AuthoritySignInSignUp)
                 // OR
                 .WithAuthority(AuthorityBase, PolicySignUpSignIn)
-                // Or
-                .WithAuthority("https://customdomain.com/"+PolicySignUpSignIn, validateAuthority:false)
+                // Or (ruled out)
+                // .WithAuthority("https://customdomain.com/"+PolicySignUpSignIn, validateAuthority:false)
                 .Build();
 
             TokenCacheHelper.Bind(PublicClientApp.UserTokenCache);

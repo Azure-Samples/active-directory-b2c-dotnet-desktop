@@ -23,17 +23,6 @@ namespace active_directory_b2c_wpf
             InitializeComponent();
         }
         
-        private IAccount GetAccountByPolicy(IEnumerable<IAccount> accounts, string policy)
-        {
-            foreach (var account in accounts)
-            {
-                string accountIdentifier = account.HomeAccountId.ObjectId.Split('.')[0];
-                if (accountIdentifier.EndsWith(policy.ToLower())) return account;
-            }
-
-            return null;
-        }
-
         private async void SignInButton_Click(object sender, RoutedEventArgs e)
         {
             AuthenticationResult authResult = null;
@@ -58,6 +47,8 @@ namespace active_directory_b2c_wpf
                             .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                             .WithPrompt(Prompt.SelectAccount)
                             .WithB2CAuthority(App.AuthorityResetPassword)
+                            // Or
+                            .WithAuthority(App.AuthorityBase, App.PolicyResetPassword)
                             .ExecuteAsync();
                     }
                     else
@@ -83,9 +74,11 @@ namespace active_directory_b2c_wpf
             {
                 ResultText.Text = $"Calling API:{App.AuthorityEditProfile}";
 
-                AuthenticationResult authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
+                AuthenticationResult authResult = await app.AcquireTokenInteractive(App.ApiScopes)
                             .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                             .WithB2CAuthority(App.AuthorityEditProfile)
+                            // Or
+                            .WithAuthority(App.AuthorityBase, App.PolicyEditProfile)
                             .WithPrompt(Prompt.NoPrompt)
                             .ExecuteAsync(new System.Threading.CancellationToken());
 
@@ -101,10 +94,10 @@ namespace active_directory_b2c_wpf
         {
             AuthenticationResult authResult = null;
             var app = App.PublicClientApp;
-            IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
+            IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync(App.PolicySignUpSignIn);
             try
             {
-                authResult = await app.AcquireTokenSilent(App.ApiScopes, GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
+                authResult = await app.AcquireTokenSilent(App.ApiScopes, accounts.FirstOrDefault())
                     .ExecuteAsync();
             }
             catch (MsalUiRequiredException ex)
@@ -192,10 +185,10 @@ namespace active_directory_b2c_wpf
             try
             {
                 var app = App.PublicClientApp;
-                IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
+                IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync(App.PolicySignUpSignIn);
 
                 AuthenticationResult authResult = await app.AcquireTokenSilent(App.ApiScopes,
-                                                                               GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
+                                                                               accounts.FirstOrDefault())
                     .ExecuteAsync();
 
                 DisplayUserInfo(authResult);
