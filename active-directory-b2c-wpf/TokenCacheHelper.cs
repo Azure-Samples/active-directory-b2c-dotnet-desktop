@@ -27,30 +27,13 @@
 
 using System.IO;
 using System.Security.Cryptography;
+using System.Windows.Controls;
 using Microsoft.Identity.Client;
 
 namespace active_directory_b2c_wpf
 {
     static class TokenCacheHelper
     {
-
-        /// <summary>
-        /// Get the user token cache
-        /// </summary>
-        /// <returns></returns>
-        public static TokenCache GetUserCache()
-        {
-            if (usertokenCache == null)
-            {
-                usertokenCache = new TokenCache();
-                usertokenCache.SetBeforeAccess(BeforeAccessNotification);
-                usertokenCache.SetAfterAccess(AfterAccessNotification);
-            }
-            return usertokenCache;
-        }
-
-        static TokenCache usertokenCache;
-
         /// <summary>
         /// Path to the token cache
         /// </summary>
