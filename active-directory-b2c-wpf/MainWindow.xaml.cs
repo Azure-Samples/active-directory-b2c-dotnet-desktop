@@ -201,7 +201,7 @@ namespace active_directory_b2c_wpf
                 DisplayUserInfo(authResult);
                 UpdateSignInState(true);
             }
-            catch (MsalUiRequiredException ex)
+            catch (MsalUiRequiredException)
             {
                 // Ignore, user will need to sign in interactively.
                 ResultText.Text = "You need to sign-in first, and then Call API";
