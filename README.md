@@ -67,11 +67,12 @@ As you saw in the demo environment, this sample calls a Web API at https://fabri
 
 You must replace the demo environment Web API with your own Web API. If you do not have your own Web API, you can clone the [Node.js Web API with Azure AD B2C](https://github.com/Azure-Samples/active-directory-b2c-javascript-nodejs-webapi) sample and register it with your tenant. 
 
+
 #### How to setup and register the Node.js Web API sample
 
 First, clone the Node.js Web API sample repository into its own directory, for example:  
 
-```bash
+```
 cd ..
 git clone https://github.com/Azure-Samples/active-directory-b2c-javascript-nodejs-webapi.git
 ```
@@ -81,11 +82,11 @@ Second, follow the instructions at [register a Web API with Azure AD B2C](https:
 Provide the following values for the Node.js Web API registration: 
 
 - Provide a descriptive Name for the Node.js Web API, for example, `My Test Node.js Web API`. You will identify this application by its Name whenever working in the Azure portal.
-- Mark **Yes** for the **Web App/Web API** setting for your application.
-- Set the **Reply URL** to `http://localhost:5000`. This is the port number that the Node.js Web API sample is configured to run on. 
+- Set the **Supported account types** to `Accounts in any organizational directory or any identity provider`
+- Set the **Redirect URI** to `http://localhost:5000`. This is the port number that the Node.js Web API sample is configured to run on. 
 - Set the **AppID URI** to `demoapi`. This AppID URI is a unique identifier representing this Node.jS Web API. The AppID URI is used to construct the scopes that are configured in you single page application's code. For example, in this Node.js Web API sample, the scope will have the value `https://<your-tenant-name>.onmicrosoft.com/demoapi/demo.read` 
 - Create the application. 
-- Once the application is created, open your `My Test Node.js Web API` application and then open the **Published Scopes** window (in the left nav menu) and add the scope `demo.read` followed by a description `demoing a read scenario`. Click **Save**.
+- Once the application is created, open your `My Test Node.js Web API` application and then open the **Expose an API** window (in the left nav menu) and add the scope `demo.read` followed by a description `demoing a read scenario`. Click **Save**.
 
 Third, in the `index.html` file of the Node.js Web API sample, update the following variables to refer to your Web API registration.  
 
@@ -107,14 +108,16 @@ Your Node.js Web API sample is now running on Port 5000.
 
 ### Step 4: Register your Native app
 
-Now you need to [register your native app in your B2C tenant](https://docs.microsoft.com/azure/active-directory-b2c/active-directory-b2c-app-registration#register-a-mobilenative-application), so that it has its own Application ID. 
+Now you need to [register your native app in your B2C tenant](https://docs.microsoft.com/azure/active-directory-b2c/add-native-application?tabs=applications), so that it has its own Application ID. 
 
 Your native application registration should include the following information:
 
 - Provide a descriptive Name for the single page application, for example, `My Test WPF App`. You will identify this application by its Name within the Azure portal.
-- Mark **Yes** for the **Native Client** setting for your application.
+- Under **Supported account types**, select `Accounts in any organizational directory or any identity provider`.
+- Under **Redirect URI**, use the drop-down to select `Public client/native (mobile & desktop)`
+- Under **Permissions**, select the `Grant admin consent to openid and offline_access permissions check box`.
 - Create your application.
-- Once the application is created, open your `My Test WPF App` and open the **API Access** window (in the left nav menu). Click **Add** and select the name of the Node.js Web API you registered previously, for example `My Test Node.js Web API`. Select the scope(s) you defined previously, for example, `demo.read` and hit **Save**.
+- Once the application is created, open your `My Test WPF App` and open the **Expose an API** window (in the left nav menu). Click **Add** and select the name of the Node.js Web API you registered previously, for example `My Test Node.js Web API`. Select the scope(s) you defined previously, for example, `demo.read` and hit **Save**.
 
 ### Step 5: Configure your Visual Studio project with your Azure AD B2C app registrations
 
