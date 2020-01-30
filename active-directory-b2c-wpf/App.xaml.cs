@@ -10,9 +10,9 @@ namespace active_directory_b2c_wpf
     /// </summary>
     public partial class App : Application
     {
-        private static readonly string Tenant = "fabrikamb2c.onmicrosoft.com";
-        private static readonly string AzureAdB2CHostname = "fabrikamb2c.b2clogin.com";
-        private static readonly string ClientId = "841e1190-d73a-450c-9d68-f5cf16b78e81";
+        private static readonly string Tenant = "ebb027d5-5294-4600-977d-b0116331dd8e";
+        private static readonly string AzureAdB2CHostname = "bgavrilb2c.b2clogin.com";
+        private static readonly string ClientId = "91bbb742-43e0-499a-a025-b37790501021";
         public static string PolicySignUpSignIn = "b2c_1_susi";
         public static string PolicyEditProfile = "b2c_1_edit_profile";
         public static string PolicyResetPassword = "b2c_1_reset";
@@ -30,6 +30,7 @@ namespace active_directory_b2c_wpf
         {
             PublicClientApp = PublicClientApplicationBuilder.Create(ClientId)
                 .WithB2CAuthority(AuthoritySignUpSignIn)
+                .WithRedirectUri("http://localhost")
                 .WithLogging(Log, LogLevel.Verbose, false) //PiiEnabled set to false
                 .Build();
 

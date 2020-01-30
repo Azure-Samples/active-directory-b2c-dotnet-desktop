@@ -22,7 +22,7 @@ namespace active_directory_b2c_wpf
         {
             InitializeComponent();
         }
-        
+
         private IAccount GetAccountByPolicy(IEnumerable<IAccount> accounts, string policy)
         {
             foreach (var account in accounts)
@@ -41,7 +41,9 @@ namespace active_directory_b2c_wpf
             try
             {
                 ResultText.Text = "";
-                authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
+                authResult = await (app as PublicClientApplication)
+                    .AcquireTokenInteractive(App.ApiScopes)
+                    .WithUseEmbeddedWebView(false)
                     .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                     .ExecuteAsync();
 
@@ -54,8 +56,11 @@ namespace active_directory_b2c_wpf
                 {
                     if (ex.Message.Contains("AADB2C90118"))
                     {
-                        authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
+                        authResult = await (app as PublicClientApplication)
+                            .AcquireTokenInteractive(App.ApiScopes)
                             .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
+                            .WithUseEmbeddedWebView(false)
+
                             .WithPrompt(Prompt.SelectAccount)
                             .WithB2CAuthority(App.AuthorityResetPassword)
                             .ExecuteAsync();
@@ -134,7 +139,7 @@ namespace active_directory_b2c_wpf
             {
                 if (string.IsNullOrEmpty(authResult.AccessToken))
                 {
-                    ResultText.Text = "Access token is null (could be expired). Please do interactive log-in again." ;
+                    ResultText.Text = "Access token is null (could be expired). Please do interactive log-in again.";
                 }
                 else
                 {
@@ -211,7 +216,7 @@ namespace active_directory_b2c_wpf
                 ResultText.Text = $"Error Acquiring Token Silently:{Environment.NewLine}{ex}";
             }
         }
-        
+
         private void UpdateSignInState(bool signedIn)
         {
             if (signedIn)
