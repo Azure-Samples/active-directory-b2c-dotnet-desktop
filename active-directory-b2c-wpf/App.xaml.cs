@@ -35,7 +35,6 @@ namespace active_directory_b2c_wpf
 
             TokenCacheHelper.Bind(PublicClientApp.UserTokenCache);
         }
-
         private static void Log(LogLevel level, string message, bool containsPii)
         {
             string logs = ($"{level} {message}");
