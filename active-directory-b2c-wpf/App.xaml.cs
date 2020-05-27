@@ -13,6 +13,7 @@ namespace active_directory_b2c_wpf
         private static readonly string Tenant = "fabrikamb2c.onmicrosoft.com";
         private static readonly string AzureAdB2CHostname = "fabrikamb2c.b2clogin.com";
         private static readonly string ClientId = "841e1190-d73a-450c-9d68-f5cf16b78e81";
+        private static readonly string RedirectUri = "https://fabrikamb2c.b2clogin.com/oauth2/nativeclient";
         public static string PolicySignUpSignIn = "b2c_1_susi";
         public static string PolicyEditProfile = "b2c_1_edit_profile";
         public static string PolicyResetPassword = "b2c_1_reset";
@@ -30,6 +31,7 @@ namespace active_directory_b2c_wpf
         {
             PublicClientApp = PublicClientApplicationBuilder.Create(ClientId)
                 .WithB2CAuthority(AuthoritySignUpSignIn)
+                .WithRedirectUri(RedirectUri)
                 .WithLogging(Log, LogLevel.Verbose, false) //PiiEnabled set to false
                 .Build();
 
