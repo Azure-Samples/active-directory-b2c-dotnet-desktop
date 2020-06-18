@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using System.IO;
 using System.Text;
 using System.Windows;
 using Microsoft.Identity.Client;
@@ -32,7 +35,7 @@ namespace active_directory_b2c_wpf
             PublicClientApp = PublicClientApplicationBuilder.Create(ClientId)
                 .WithB2CAuthority(AuthoritySignUpSignIn)
                 .WithRedirectUri(RedirectUri)
-                .WithLogging(Log, LogLevel.Verbose, false) //PiiEnabled set to false
+                .WithLogging(Log, LogLevel.Info, false) // don't log PII details on a regular basis
                 .Build();
 
             TokenCacheHelper.Bind(PublicClientApp.UserTokenCache);

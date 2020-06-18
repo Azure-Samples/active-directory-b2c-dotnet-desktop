@@ -1,4 +1,7 @@
-﻿using Microsoft.Identity.Client;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,17 +25,6 @@ namespace active_directory_b2c_wpf
         {
             InitializeComponent();
         }
-        
-        private IAccount GetAccountByPolicy(IEnumerable<IAccount> accounts, string policy)
-        {
-            foreach (var account in accounts)
-            {
-                string accountIdentifier = account.HomeAccountId.ObjectId.Split('.')[0];
-                if (accountIdentifier.EndsWith(policy.ToLower())) return account;
-            }
-
-            return null;
-        }
 
         private async void SignInButton_Click(object sender, RoutedEventArgs e)
         {
@@ -41,7 +33,7 @@ namespace active_directory_b2c_wpf
             try
             {
                 ResultText.Text = "";
-                authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
+                authResult = await app.AcquireTokenInteractive(App.ApiScopes)
                     .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                     .ExecuteAsync();
 
@@ -54,7 +46,7 @@ namespace active_directory_b2c_wpf
                 {
                     if (ex.Message.Contains("AADB2C90118"))
                     {
-                        authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
+                        authResult = await app.AcquireTokenInteractive(App.ApiScopes)
                             .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                             .WithPrompt(Prompt.SelectAccount)
                             .WithB2CAuthority(App.AuthorityResetPassword)
@@ -74,6 +66,8 @@ namespace active_directory_b2c_wpf
             {
                 ResultText.Text = $"Error Acquiring Token:{Environment.NewLine}{ex}";
             }
+
+            DisplayUserInfo(authResult);
         }
 
         private async void EditProfileButton_Click(object sender, RoutedEventArgs e)
@@ -83,10 +77,10 @@ namespace active_directory_b2c_wpf
             {
                 ResultText.Text = $"Calling API:{App.AuthorityEditProfile}";
 
-                AuthenticationResult authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
+                AuthenticationResult authResult = await app.AcquireTokenInteractive(App.ApiScopes)
                             .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                             .WithB2CAuthority(App.AuthorityEditProfile)
-                            .WithPrompt(Prompt.NoPrompt)
+                            .WithPrompt(Prompt.NoPrompt) 
                             .ExecuteAsync(new System.Threading.CancellationToken());
 
                 DisplayUserInfo(authResult);
@@ -101,10 +95,10 @@ namespace active_directory_b2c_wpf
         {
             AuthenticationResult authResult = null;
             var app = App.PublicClientApp;
-            IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
+            var accounts = await app.GetAccountsAsync(App.PolicySignUpSignIn);
             try
             {
-                authResult = await app.AcquireTokenSilent(App.ApiScopes, GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
+                authResult = await app.AcquireTokenSilent(App.ApiScopes, accounts.FirstOrDefault())
                     .ExecuteAsync();
             }
             catch (MsalUiRequiredException ex)
@@ -170,6 +164,7 @@ namespace active_directory_b2c_wpf
 
         private async void SignOutButton_Click(object sender, RoutedEventArgs e)
         {
+            // SingOut will remove tokens from the token cache from ALL accounts, irrespective of user flow
             IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
             try
             {
@@ -192,10 +187,9 @@ namespace active_directory_b2c_wpf
             try
             {
                 var app = App.PublicClientApp;
-                IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
+                var accounts = await app.GetAccountsAsync(App.PolicySignUpSignIn);
 
-                AuthenticationResult authResult = await app.AcquireTokenSilent(App.ApiScopes,
-                                                                               GetAccountByPolicy(accounts, App.PolicySignUpSignIn))
+                AuthenticationResult authResult = await app.AcquireTokenSilent(App.ApiScopes, accounts.FirstOrDefault())
                     .ExecuteAsync();
 
                 DisplayUserInfo(authResult);
@@ -237,11 +231,11 @@ namespace active_directory_b2c_wpf
 
         private void DisplayUserInfo(AuthenticationResult authResult)
         {
-            TokenInfoText.Text = "";
             if (authResult != null)
             {
                 JObject user = ParseIdToken(authResult.IdToken);
 
+                TokenInfoText.Text = "";
                 TokenInfoText.Text += $"Name: {user["name"]?.ToString()}" + Environment.NewLine;
                 TokenInfoText.Text += $"User Identifier: {user["oid"]?.ToString()}" + Environment.NewLine;
                 TokenInfoText.Text += $"Street Address: {user["streetAddress"]?.ToString()}" + Environment.NewLine;
