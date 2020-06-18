@@ -33,7 +33,7 @@ namespace active_directory_b2c_wpf
             try
             {
                 ResultText.Text = "";
-                authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
+                authResult = await app.AcquireTokenInteractive(App.ApiScopes)
                     .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                     .ExecuteAsync();
 
@@ -46,7 +46,7 @@ namespace active_directory_b2c_wpf
                 {
                     if (ex.Message.Contains("AADB2C90118"))
                     {
-                        authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
+                        authResult = await app.AcquireTokenInteractive(App.ApiScopes)
                             .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                             .WithPrompt(Prompt.SelectAccount)
                             .WithB2CAuthority(App.AuthorityResetPassword)
@@ -66,6 +66,8 @@ namespace active_directory_b2c_wpf
             {
                 ResultText.Text = $"Error Acquiring Token:{Environment.NewLine}{ex}";
             }
+
+            DisplayUserInfo(authResult);
         }
 
         private async void EditProfileButton_Click(object sender, RoutedEventArgs e)
@@ -75,10 +77,10 @@ namespace active_directory_b2c_wpf
             {
                 ResultText.Text = $"Calling API:{App.AuthorityEditProfile}";
 
-                AuthenticationResult authResult = await (app as PublicClientApplication).AcquireTokenInteractive(App.ApiScopes)
+                AuthenticationResult authResult = await app.AcquireTokenInteractive(App.ApiScopes)
                             .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
                             .WithB2CAuthority(App.AuthorityEditProfile)
-                            .WithPrompt(Prompt.NoPrompt)
+                            .WithPrompt(Prompt.NoPrompt) 
                             .ExecuteAsync(new System.Threading.CancellationToken());
 
                 DisplayUserInfo(authResult);
@@ -162,6 +164,7 @@ namespace active_directory_b2c_wpf
 
         private async void SignOutButton_Click(object sender, RoutedEventArgs e)
         {
+            // SingOut will remove tokens from the token cache from ALL accounts, irrespective of user flow
             IEnumerable<IAccount> accounts = await App.PublicClientApp.GetAccountsAsync();
             try
             {
@@ -228,11 +231,11 @@ namespace active_directory_b2c_wpf
 
         private void DisplayUserInfo(AuthenticationResult authResult)
         {
-            TokenInfoText.Text = "";
             if (authResult != null)
             {
                 JObject user = ParseIdToken(authResult.IdToken);
 
+                TokenInfoText.Text = "";
                 TokenInfoText.Text += $"Name: {user["name"]?.ToString()}" + Environment.NewLine;
                 TokenInfoText.Text += $"User Identifier: {user["oid"]?.ToString()}" + Environment.NewLine;
                 TokenInfoText.Text += $"Street Address: {user["streetAddress"]?.ToString()}" + Environment.NewLine;
