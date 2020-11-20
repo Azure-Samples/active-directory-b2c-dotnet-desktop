@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -40,13 +41,11 @@ namespace active_directory_b2c_wpf
 
             TokenCacheHelper.Bind(PublicClientApp.UserTokenCache);
         }
+
         private static void Log(LogLevel level, string message, bool containsPii)
         {
-            string logs = ($"{level} {message}");
-            StringBuilder sb = new StringBuilder();
-            sb.Append(logs);
-            File.AppendAllText(System.Reflection.Assembly.GetExecutingAssembly().Location + ".msalLogs.txt", sb.ToString());
-            sb.Clear();
+            string logs = $"{level} {message}{Environment.NewLine}";
+            File.AppendAllText(System.Reflection.Assembly.GetExecutingAssembly().Location + ".msalLogs.txt", logs);
         }
     }
 }
