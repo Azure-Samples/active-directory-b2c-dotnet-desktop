@@ -27,7 +27,7 @@ namespace active_directory_b2c_wpf
         private static readonly string ClientId = "841e1190-d73a-450c-9d68-f5cf16b78e81";
 
         /// <summary>
-        /// Should be one of the choices on the Azure AD B2c / App(Keten) / Authentication blade
+        /// Should be one of the choices on the Azure AD B2c / [This App] / Authentication blade
         /// </summary>
         private static readonly string RedirectUri = "https://fabrikamb2c.b2clogin.com/oauth2/nativeclient";
 
@@ -39,7 +39,11 @@ namespace active_directory_b2c_wpf
         public static string PolicyResetPassword = "b2c_1_reset";
 
         /// <summary>
-        /// Note: AcquireTokenInteractive will fail to get the AccessToken if "Admin Consent" has not been granted to this scope:
+        /// Note: AcquireTokenInteractive will fail to get the AccessToken if "Admin Consent" has not been granted to this scope.  To achieve this:
+        /// 
+        /// 1st: Azure AD B2C / App registrations / [API App] / Expose an API / Add a scope
+        /// 2nd: Azure AD B2C / App registrations / [This App] / API Permissions / Add a permission / My APIs / [API App] / Select & Add Permissions
+        /// 3rd: Azure AD B2C / App registrations / [This App] / API Permissions / ... (next to add a permission) / Grant Admin Consent for [tenant]
         /// </summary>
         public static string[] ApiScopes = { "https://fabrikamb2c.onmicrosoft.com/helloapi/demo.read" };
 
