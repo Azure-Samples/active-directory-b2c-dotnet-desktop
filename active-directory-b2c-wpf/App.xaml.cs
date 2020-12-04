@@ -29,14 +29,14 @@ namespace active_directory_b2c_wpf
         /// <summary>
         /// Should be one of the choices on the Azure AD B2c / [This App] / Authentication blade
         /// </summary>
-        private static readonly string RedirectUri = "https://fabrikamb2c.b2clogin.com/oauth2/nativeclient";
+        private static readonly string RedirectUri = $"https://{AzureAdB2CHostname}/oauth2/nativeclient";
 
         /// <summary>
         /// From Azure AD B2C / UserFlows blade
         /// </summary>
-        public static string PolicySignUpSignIn = "b2c_1_susi";
-        public static string PolicyEditProfile = "b2c_1_edit_profile";
-        public static string PolicyResetPassword = "b2c_1_reset";
+        public const string PolicySignUpSignIn = "b2c_1_susi";
+        public const string PolicyEditProfile = "b2c_1_edit_profile";
+        public const string PolicyResetPassword = "b2c_1_reset";
 
         /// <summary>
         /// Note: AcquireTokenInteractive will fail to get the AccessToken if "Admin Consent" has not been granted to this scope.  To achieve this:
@@ -45,18 +45,18 @@ namespace active_directory_b2c_wpf
         /// 2nd: Azure AD B2C / App registrations / [This App] / API Permissions / Add a permission / My APIs / [API App] / Select & Add Permissions
         /// 3rd: Azure AD B2C / App registrations / [This App] / API Permissions / ... (next to add a permission) / Grant Admin Consent for [tenant]
         /// </summary>
-        public static string[] ApiScopes = { "https://fabrikamb2c.onmicrosoft.com/helloapi/demo.read" };
+        public static readonly string[] ApiScopes = { "https://fabrikamb2c.onmicrosoft.com/helloapi/demo.read" };
 
         /// <summary>
         /// URL for API which will receive the bearer token corresponding to this authentication
         /// </summary>
-        public static string ApiEndpoint = "https://fabrikamb2chello.azurewebsites.net/hello";
+        public static readonly string ApiEndpoint = "https://fabrikamb2chello.azurewebsites.net/hello";
 
         // Shouldn't need to change these:
-        private static string AuthorityBase = $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
-        public static string AuthoritySignUpSignIn = $"{AuthorityBase}{PolicySignUpSignIn}";
-        public static string AuthorityEditProfile = $"{AuthorityBase}{PolicyEditProfile}";
-        public static string AuthorityResetPassword = $"{AuthorityBase}{PolicyResetPassword}";
+        private static readonly string AuthorityBase = $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
+        public static readonly string AuthoritySignUpSignIn = $"{AuthorityBase}{PolicySignUpSignIn}";
+        public static readonly string AuthorityEditProfile = $"{AuthorityBase}{PolicyEditProfile}";
+        public static readonly string AuthorityResetPassword = $"{AuthorityBase}{PolicyResetPassword}";
 
         public static IPublicClientApplication PublicClientApp { get; private set; }
 
