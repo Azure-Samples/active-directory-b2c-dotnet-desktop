@@ -29,7 +29,7 @@ namespace active_directory_b2c_wpf
         /// <summary>
         /// Should be one of the choices on the Azure AD B2c / [This App] / Authentication blade
         /// </summary>
-        private static readonly string RedirectUri = "https://fabrikamb2c.b2clogin.com/oauth2/nativeclient";
+        private static readonly string RedirectUri = $"https://{TenantName}.b2clogin.com/oauth2/nativeclient";
 
         /// <summary>
         /// From Azure AD B2C / UserFlows blade
@@ -45,7 +45,7 @@ namespace active_directory_b2c_wpf
         /// 2nd: Azure AD B2C / App registrations / [This App] / API Permissions / Add a permission / My APIs / [API App] / Select & Add Permissions
         /// 3rd: Azure AD B2C / App registrations / [This App] / API Permissions / ... (next to add a permission) / Grant Admin Consent for [tenant]
         /// </summary>
-        public static string[] ApiScopes = { "https://fabrikamb2c.onmicrosoft.com/helloapi/demo.read" };
+        public static string[] ApiScopes = { $"https://{Tenant}/helloapi/demo.read" };
 
         /// <summary>
         /// URL for API which will receive the bearer token corresponding to this authentication
