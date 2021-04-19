@@ -108,7 +108,7 @@ Your Node.js Web API sample is now running on Port 5000.
 
 ### Step 4: Register your Native app
 
-Now you need to [register your native app in your B2C tenant](https://docs.microsoft.com/azure/active-directory-b2c/active-directory-b2c-app-registration#register-a-mobilenative-application), so that it has its own Application ID. 
+Now you need to [register your native app in your B2C tenant](https://docs.microsoft.com/azure/active-directory-b2c/add-native-application?tabs=app-reg-ga), so that it has its own Application ID. 
 
 Your native application registration should include the following information:
 
