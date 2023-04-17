@@ -34,7 +34,7 @@ namespace active_directory_b2c_wpf
             {
                 ResultText.Text = "";
                 authResult = await app.AcquireTokenInteractive(App.ApiScopes)
-                    .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)
+                    .WithParentActivityOrWindow(new WindowInteropHelper(this).Handle)                    
                     .ExecuteAsync();
 
                 DisplayUserInfo(authResult);

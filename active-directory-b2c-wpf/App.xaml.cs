@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using Microsoft.Identity.Client;
+using Microsoft.Identity.Client.Desktop;
 
 namespace active_directory_b2c_wpf
 {
@@ -65,7 +66,8 @@ namespace active_directory_b2c_wpf
             PublicClientApp = PublicClientApplicationBuilder.Create(ClientId)
                 .WithB2CAuthority(AuthoritySignUpSignIn)
                 .WithRedirectUri(RedirectUri)
-                .WithLogging(Log, LogLevel.Info, false) // don't log P(ersonally) I(dentifiable) I(nformation) details on a regular basis
+                .WithWindowsEmbeddedBrowserSupport()
+                .WithLogging(Log, LogLevel.Info, true) 
                 .Build();
 
             TokenCacheHelper.Bind(PublicClientApp.UserTokenCache);
